@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "outDir": "dist",
+    "rootDir": "src",
+    "esModuleInterop": true,
+    "lib": ["ES2024"],
+    "target": "ES2024",
+    "strict": true,
+    "moduleResolution": "nodenext",
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"]
+}
