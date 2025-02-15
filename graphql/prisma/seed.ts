@@ -22,7 +22,9 @@ async function main() {
         maxHP: pokemon.maxHP,
         evolutionAmount: pokemon.evolutionRequirements?.amount,
         evolutionName: pokemon.evolutionRequirements?.name,
-        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`,
+        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${Number(
+          pokemon.id,
+        ).toString()}.png`,
       },
     })
 
