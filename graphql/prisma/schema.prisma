@@ -13,8 +13,8 @@ generator pothos {
 
 model Pokemon {
     id              String         @id @default(cuid())
-    number          String?        @unique
-    name            String?
+    number          String         @unique
+    name            String
     weightMin       String?
     weightMax       String?
     heightMin       String?
@@ -32,7 +32,7 @@ model Pokemon {
     evolutionAmount Int?
     evolutionName   String?
     maxHP           Int?
-    image           String?
+    image           String
     tierlists       Tierlist[]
     tiers           Tier[]
     templates       Template[]
@@ -50,8 +50,8 @@ model Attack {
     id                    String          @id @default(cuid())
     fastPokemonAttacks    PokemonAttack[] @relation("FastAttacks")
     specialPokemonAttacks PokemonAttack[] @relation("SpecialAttacks")
-    name                  String?
-    type                  String?
+    name                  String
+    type                  String
     damage                Int?
 }
 
