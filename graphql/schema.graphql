@@ -1,8 +1,139 @@
+type Attack {
+  damage: Int
+  id: ID
+  name: String
+  type: String
+}
+
+input AttackCreateInput {
+  damage: Int
+  name: String!
+  type: String
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
 
-type Mutation
+type Mutation {
+  createPokemon(data: PokemonCreateInput!): Pokemon
+  createTemplate(data: TemplateCreateInput!): Template
+  createTierlist(data: TierlistCreateInput!): Tierlist
+  deleteTierlist(id: String!): Tierlist
+  updateTierlist(data: TierlistCreateInput!, id: String!): Tierlist
+}
 
-type Query
+type Pokemon {
+  attacks: PokemonAttack
+  classification: String
+  evolutionAmount: Int
+  evolutionName: String
+  evolutions: [Pokemon!]
+  evolvedFrom: Pokemon
+  fleeRate: Float
+  heightMax: String
+  heightMin: String
+  id: ID
+  image: String
+  maxCP: Int
+  maxHP: Int
+  name: String
+  number: String
+  resistant: [String!]
+  types: [String!]
+  weaknesses: [String!]
+  weightMax: String
+  weightMin: String
+}
+
+type PokemonAttack {
+  fast: [Attack!]
+  id: ID
+  pokemon: Pokemon
+  special: [Attack!]
+}
+
+input PokemonAttackCreateInput {
+  fast: [AttackCreateInput!]
+  special: [AttackCreateInput!]
+}
+
+input PokemonCreateInput {
+  attacks: PokemonAttackCreateInput
+  classification: String
+  evolutionAmount: Int
+  evolutionName: String
+  fleeRate: Float
+  heightMax: String
+  heightMin: String
+  maxCP: Int
+  maxHP: Int
+  name: String!
+  number: String
+  resistant: [String!]
+  types: [String!]
+  weaknesses: [String!]
+  weightMax: String
+  weightMin: String
+}
+
+input PokemonUniqueInput {
+  id: String
+  number: String
+}
+
+type Query {
+  allPokemons: [Pokemon!]
+  pokemon(where: PokemonUniqueInput!): Pokemon
+  template(where: TemplateUniqueInput!): Template
+  templates: [Template!]
+  tierlist(where: TierlistUniqueInput!): Tierlist
+  tierlists: [Tierlist!]
+}
+
+type Template {
+  id: ID
+  pokemons: [Pokemon!]
+  tiers: [String!]
+  title: String
+}
+
+input TemplateCreateInput {
+  pokemonIds: [String!]
+  tiers: [String!]
+  title: String!
+}
+
+input TemplateUniqueInput {
+  id: String
+}
+
+type Tier {
+  id: Int
+  pokemons: [Pokemon!]
+  tierlist: Tierlist
+  title: String
+}
+
+input TierCreateInput {
+  pokemonIds: [String!]
+  title: String!
+}
+
+type Tierlist {
+  id: ID
+  pokemons: [Pokemon!]
+  tiers: [Tier!]
+  title: String
+}
+
+input TierlistCreateInput {
+  pokemonIds: [String!]
+  tiers: [TierCreateInput!]
+  title: String!
+}
+
+input TierlistUniqueInput {
+  id: String
+}

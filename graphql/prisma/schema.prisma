@@ -33,6 +33,9 @@ model Pokemon {
     evolutionName   String?
     maxHP           Int?
     image           String?
+    tierlists       Tierlist[]
+    tiers           Tier[]
+    templates       Template[]
 }
 
 model PokemonAttack {
@@ -50,4 +53,26 @@ model Attack {
     name                  String?
     type                  String?
     damage                Int?
+}
+
+model Tierlist {
+    id       String    @id @default(cuid())
+    title    String
+    pokemons Pokemon[]
+    tiers    Tier[]
+}
+
+model Template {
+    id       String    @id @default(cuid())
+    title    String
+    pokemons Pokemon[]
+    tiers    String[]
+}
+
+model Tier {
+    id         Int       @id @default(autoincrement())
+    title      String
+    tierlist   Tierlist? @relation(fields: [tierlistId], references: [id])
+    tierlistId String?
+    pokemons   Pokemon[]
 }
