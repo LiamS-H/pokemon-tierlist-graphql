@@ -1,0 +1,53 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+generator pothos {
+    provider = "prisma-pothos-types"
+}
+
+model Pokemon {
+    id              String         @id @default(cuid())
+    number          String?        @unique
+    name            String?
+    weightMin       String?
+    weightMax       String?
+    heightMin       String?
+    heightMax       String?
+    classification  String?
+    types           String
+    resistant       String
+    attacks         PokemonAttack?
+    weaknesses      String
+    fleeRate        Float?
+    maxCP           Int?
+    evolutions      Pokemon[]      @relation("PokemonToPokemon")
+    evolvedFrom     Pokemon?       @relation("PokemonToPokemon", fields: [evolvedFromId], references: [id])
+    evolvedFromId   String?
+    evolutionAmount Int?
+    evolutionName   String?
+    maxHP           Int?
+    image           String?
+}
+
+model PokemonAttack {
+    id        String   @id @default(cuid())
+    pokemon   Pokemon  @relation(fields: [pokemonId], references: [id])
+    pokemonId String   @unique
+    fast      Attack[] @relation("FastAttacks")
+    special   Attack[] @relation("SpecialAttacks")
+}
+
+model Attack {
+    id                    String          @id @default(cuid())
+    fastPokemonAttacks    PokemonAttack[] @relation("FastAttacks")
+    specialPokemonAttacks PokemonAttack[] @relation("SpecialAttacks")
+    name                  String?
+    type                  String?
+    damage                Int?
+}

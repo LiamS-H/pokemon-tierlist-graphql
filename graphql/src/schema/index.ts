@@ -1,4 +1,5 @@
 import { builder } from '../builder'
+import './pokemon'
 import { writeFileSync } from 'fs'
 import { resolve } from 'path'
 import { printSchema } from 'graphql'
