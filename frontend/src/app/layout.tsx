@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
+import { NavBar } from "./navbar";
 
 export const metadata: Metadata = {
     title: "Pokemon Tierlist Maker",
@@ -15,7 +16,10 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`antialiased`}>
-                <Providers>{children}</Providers>
+                <Providers>
+                    <NavBar />
+                    {children}
+                </Providers>
             </body>
         </html>
     );
