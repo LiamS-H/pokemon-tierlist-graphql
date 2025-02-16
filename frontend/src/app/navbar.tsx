@@ -29,7 +29,7 @@ function NavbarItem({ href, children }: { href: Url; children: ReactNode }) {
 
 export function NavBar() {
     return (
-        <div className="sticky top-0 p-2 bg-primary">
+        <div className="sticky top-0 p-2 bg-primary z-10">
             <ul className="flex gap-4">
                 <NavbarItem href={"/"}>Create</NavbarItem>
                 <NavbarItem href={"/tierlists"}>Tierlists</NavbarItem>
