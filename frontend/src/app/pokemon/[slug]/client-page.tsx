@@ -1,26 +1,42 @@
 "use client";
-import { useRelayEnvironment } from "react-relay";
-import PokemonDetailNode, {
-    detailedPokemonQuery,
-} from "./__generated__/detailedPokemonQuery.graphql";
+import { graphql, usePreloadedQuery, useRelayEnvironment } from "react-relay";
 import useSerializableQuery, {
     SerializablePreloadedQuery,
 } from "@/lib/relay/useSerializeableQuery";
-import DetailedPokemon from "./detailed-pokemon";
+import { PokemonModal } from "@/components/pokemonModal";
+import clientPagePokemonNode, {
+    clientPagePokemonQuery,
+} from "./__generated__/clientPagePokemonQuery.graphql";
 
-export function PokemonDetailed({
+export function PokemonClientPage({
     serializedQuery,
 }: {
     serializedQuery: SerializablePreloadedQuery<
-        typeof PokemonDetailNode,
-        detailedPokemonQuery
+        typeof clientPagePokemonNode,
+        clientPagePokemonQuery
     >;
 }) {
     const environment = useRelayEnvironment();
     const queryRef = useSerializableQuery<
-        typeof PokemonDetailNode,
-        detailedPokemonQuery
+        typeof clientPagePokemonNode,
+        clientPagePokemonQuery
     >(environment, serializedQuery);
+    const { pokemon } = usePreloadedQuery(
+        graphql`
+            query clientPagePokemonQuery($number: String) {
+                pokemon(where: { number: $number }) {
+                    id
+                    ...pokemonModal_pokemon
+                }
+            }
+        `,
+        queryRef
+    );
+    if (!pokemon) {
+        return <h1>Pokemon not found</h1>;
+    }
 
-    return <DetailedPokemon preloadedQuery={queryRef} />;
+    return <PokemonModal fragment={pokemon} />;
+
+    // return <PokemonModal preloadedQuery={queryRef} />;
 }

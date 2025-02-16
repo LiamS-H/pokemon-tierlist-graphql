@@ -1,8 +1,8 @@
-import { PokemonDetailed } from "./client-page";
-import PokemonDetialedNode, {
-    type detailedPokemonQuery,
-} from "./__generated__/detailedPokemonQuery.graphql";
 import loadSerializableQuery from "@/lib/relay/loadSerializableQuery";
+import { PokemonClientPage } from "./client-page";
+import clientPagePokemonNode, {
+    clientPagePokemonQuery,
+} from "./__generated__/clientPagePokemonQuery.graphql";
 
 export async function generateStaticParams() {
     return Array.from({ length: 151 }, (_, i) => ({
@@ -23,9 +23,11 @@ export default async function Page({
     }
 
     const serializedQuery = await loadSerializableQuery<
-        typeof PokemonDetialedNode,
-        detailedPokemonQuery
-    >(PokemonDetialedNode.params, { number: num.toString().padStart(3, "0") });
+        typeof clientPagePokemonNode,
+        clientPagePokemonQuery
+    >(clientPagePokemonNode.params, {
+        number: num.toString().padStart(3, "0"),
+    });
 
-    return <PokemonDetailed serializedQuery={serializedQuery} />;
+    return <PokemonClientPage serializedQuery={serializedQuery} />;
 }
