@@ -35,9 +35,17 @@ export function PokemonThumnail({
                     height: dimension,
                 }}
             >
-                <Badge className="absolute top-2 left-2">{pokemon.name}</Badge>
                 <Badge
-                    className="absolute bottom-2 right-2"
+                    className={`absolute ${
+                        size === 1 ? "top-1 left-1" : "top-2 left-2"
+                    }`}
+                >
+                    {pokemon.name}
+                </Badge>
+                <Badge
+                    className={`absolute ${
+                        size === 1 ? "bottom-1 right-1" : "bottom-2 right-2"
+                    }`}
                     variant="secondary"
                 >
                     {pokemon.number}
