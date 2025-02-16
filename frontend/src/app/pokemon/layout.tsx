@@ -26,9 +26,9 @@ export default function Page({ children }: { children: ReactNode }) {
     }
 
     return (
-        <div className="w-full flex justify-center">
-            <div className="max-w-4xl">
-                <ul className="flex flex-wrap gap-1">
+        <div className="w-full h-full relative">
+            <div className="absolute h-full flex justify-center w-full overflow-auto">
+                <ul className="flex flex-wrap gap-1 max-w-3xl">
                     {allPokemons.map((pokemon) => (
                         <li key={pokemon.id}>
                             <PokemonThumnail
@@ -39,7 +39,7 @@ export default function Page({ children }: { children: ReactNode }) {
                     ))}
                 </ul>
             </div>
-            {children}
+            <div className="absoute top-20">{children}</div>
         </div>
     );
 }

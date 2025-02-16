@@ -16,21 +16,6 @@ import { X } from "lucide-react";
 import Link from "next/link";
 import { pokemonModal_pokemon$key } from "./__generated__/pokemonModal_pokemon.graphql";
 
-function SectionCard({
-    title,
-    children,
-}: {
-    title?: string;
-    children: ReactNode;
-}) {
-    return (
-        <Card className="p-4 w-full h-fit">
-            {title && <CardTitle className="pb-1">{title}</CardTitle>}
-            {children}
-        </Card>
-    );
-}
-
 export function PokemonModal({
     fragment,
 }: {
@@ -72,7 +57,7 @@ export function PokemonModal({
     const weaknesses = pokemon.weaknesses ?? ["none"];
 
     return (
-        <div className="w-full absolute left-0 flex justify-center">
+        <div className="w-full left-0 flex justify-center">
             <Card className="flex max-w-5xl relative bg-card/90">
                 <div className="flex gap-2 absolute top-2 right-2">
                     <BackButton />
@@ -88,7 +73,7 @@ export function PokemonModal({
                     name={pokemon.name}
                 />
                 <div>
-                    <CardHeader>
+                    <CardHeader className="bg-card/50">
                         <CardTitle>
                             {pokemon.name} - {pokemon.number?.padStart(3, "0")}
                         </CardTitle>
@@ -141,5 +126,20 @@ export function PokemonModal({
                 </div>
             </Card>
         </div>
+    );
+}
+
+function SectionCard({
+    title,
+    children,
+}: {
+    title?: string;
+    children: ReactNode;
+}) {
+    return (
+        <Card className="p-4 w-full h-fit">
+            {title && <CardTitle className="pb-1">{title}</CardTitle>}
+            {children}
+        </Card>
     );
 }

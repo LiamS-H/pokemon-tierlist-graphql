@@ -14,8 +14,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body className={`antialiased`}>
+        <html lang="en" className="h-screen">
+            <body className={`antialiased h-full flex flex-col`}>
                 <Providers>
                     <NavBar />
                     {children}
