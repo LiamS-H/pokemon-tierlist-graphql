@@ -3,11 +3,12 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --no-notify --respawn --transpile-only src/server",
-    "start": "node dist/server",
+    "start": "npx prisma node dist/server",
     "clean": "rm -rf dist",
-    "build": "npm -s run clean && npm -s run generate && tsc && npm run build:schema",
+    "build": "npm -s run clean && npx prisma generate --no-engine && npm run build:schema && npm run build:server",
     "build:schema": "ts-node src/schema/index.ts",
-    "generate": "npm -s run generate:prisma",
+    "build:server": "tsc -p tsconfig.json",
+    "generate": "npx prisma generate",
     "generate:prisma": "prisma generate"
   },
   "prettier": {
@@ -22,12 +23,13 @@
     "@prisma/extension-accelerate": "^1.2.2",
     "graphql": "16.10.0",
     "graphql-scalars": "1.24.1",
-    "graphql-yoga": "5.11.0"
+    "graphql-yoga": "5.11.0",
+    "prisma": "6.3.1",
+    "ts-node": "10.9.2"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.8",
     "@types/node": "22.13.1",
-    "prisma": "6.3.1",
-    "ts-node": "10.9.2",
     "ts-node-dev": "2.0.0",
     "typescript": "5.7.3"
   },

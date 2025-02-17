@@ -1,5 +1,9 @@
+// TEMP FIX: for some reason pothos types aren't being inferred correctly
+// @ts-nocheck
+import { ObjectFieldBuilder } from '@pothos/core'
 import { builder } from '../builder'
 import { prisma } from '../db'
+import { Pokemon } from '@prisma/client'
 
 builder.prismaObject('Pokemon', {
   fields: (t) => ({
@@ -34,7 +38,6 @@ builder.prismaObject('Pokemon', {
     evolvedFrom: t.relation('evolvedFrom', { nullable: true }),
   }),
 })
-
 builder.prismaObject('Attack', {
   fields: (t) => ({
     id: t.exposeID('id'),

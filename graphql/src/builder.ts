@@ -4,9 +4,13 @@ import type PrismaTypes from '@pothos/plugin-prisma/generated'
 import { DateTimeResolver } from 'graphql-scalars'
 import { prisma } from './db'
 
+export interface IContext {
+  prisma: typeof prisma
+}
+
 export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes
-  Context: {}
+  Context: IContext
   Scalars: {
     DateTime: {
       Input: Date
