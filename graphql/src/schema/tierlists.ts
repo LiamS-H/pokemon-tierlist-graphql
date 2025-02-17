@@ -136,7 +136,7 @@ builder.mutationFields((t) => ({
       return prisma.tierlist.create({
         ...query,
         data: {
-          updatedAt: Date.now().toString(),
+          updatedAt: new Date().toISOString(),
           title: args.data.title,
           pokemons: {
             connect: args.data.pokemonIds?.map((id) => ({ id })) ?? [],
