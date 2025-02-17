@@ -18,8 +18,10 @@ import { pokemonModal_pokemon$key } from "./__generated__/pokemonModal_pokemon.g
 
 export function PokemonModal({
     fragment,
+    buttons,
 }: {
     fragment: pokemonModal_pokemon$key;
+    buttons: ReactNode;
 }) {
     const pokemon = useFragment(
         graphql`
@@ -60,12 +62,7 @@ export function PokemonModal({
         <div className="w-full left-0 flex justify-center">
             <Card className="flex max-w-5xl relative bg-card/90">
                 <div className="flex gap-2 absolute top-2 right-2">
-                    <BackButton />
-                    <Link href="/pokemon">
-                        <Button variant="destructive" size="icon">
-                            <X />
-                        </Button>
-                    </Link>
+                    {buttons}
                 </div>
                 <PokemonImage
                     dimension={96 * 5}

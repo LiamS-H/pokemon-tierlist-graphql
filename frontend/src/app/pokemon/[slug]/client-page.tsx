@@ -7,6 +7,10 @@ import { PokemonModal } from "@/components/pokemonModal";
 import clientPagePokemonNode, {
     clientPagePokemonQuery,
 } from "./__generated__/clientPagePokemonQuery.graphql";
+import BackButton from "@/components/ui/backButton";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function PokemonClientPage({
     serializedQuery,
@@ -36,7 +40,21 @@ export function PokemonClientPage({
         return <h1>Pokemon not found</h1>;
     }
 
-    return <PokemonModal fragment={pokemon} />;
+    return (
+        <PokemonModal
+            fragment={pokemon}
+            buttons={
+                <>
+                    <BackButton />
+                    <Link href="/pokemon">
+                        <Button variant="destructive" size="icon">
+                            <X />
+                        </Button>
+                    </Link>
+                </>
+            }
+        />
+    );
 
     // return <PokemonModal preloadedQuery={queryRef} />;
 }
