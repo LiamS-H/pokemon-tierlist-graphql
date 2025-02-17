@@ -6,6 +6,7 @@ builder.prismaObject('Tierlist', {
     id: t.exposeID('id'),
     title: t.exposeString('title'),
     pokemons: t.relation('pokemons'),
+    published: t.exposeBoolean('published'),
     tiers: t.relation('tiers'),
     createdAt: t.expose('createdAt', { type: 'DateTime' }),
     updatedAt: t.expose('updatedAt', { type: 'DateTime' }),
@@ -59,6 +60,14 @@ const TierlistCreateInput = builder.inputType('TierlistCreateInput', {
     tiers: t.field({ type: [TierCreateInput] }),
   }),
 })
+const TierlistUpdateInput = builder.inputType('TierlistUpdateInput', {
+  fields: (t) => ({
+    title: t.string({ required: true }),
+    pokemonIds: t.stringList(),
+    tiers: t.field({ type: [TierCreateInput] }),
+    publised: t.boolean(),
+  }),
+})
 
 const TemplateCreateInput = builder.inputType('TemplateCreateInput', {
   fields: (t) => ({
@@ -71,7 +80,14 @@ const TemplateCreateInput = builder.inputType('TemplateCreateInput', {
 builder.queryFields((t) => ({
   tierlists: t.prismaField({
     type: ['Tierlist'],
-    resolve: (query) => prisma.tierlist.findMany({ ...query }),
+    resolve: (query) =>
+      prisma.tierlist.findMany({
+        ...query,
+        where: {
+          published: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
   }),
   tierlist: t.prismaField({
     type: 'Tierlist',
@@ -87,7 +103,14 @@ builder.queryFields((t) => ({
   }),
   templates: t.prismaField({
     type: ['Template'],
-    resolve: (query) => prisma.template.findMany({ ...query }),
+    resolve: (query) =>
+      prisma.template.findMany({
+        ...query,
+        where: {
+          published: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
   }),
   template: t.prismaField({
     type: 'Template',
@@ -153,13 +176,14 @@ builder.mutationFields((t) => ({
     type: 'Tierlist',
     args: {
       id: t.arg.string({ required: true }),
-      data: t.arg({ type: TierlistCreateInput, required: true }),
+      data: t.arg({ type: TierlistUpdateInput, required: true }),
     },
     resolve: async (query, parent, args) => {
       return prisma.tierlist.update({
         ...query,
         where: { id: args.id },
         data: {
+          published: args.data.publised ?? undefined,
           title: args.data.title,
           pokemons: {
             set: args.data.pokemonIds?.map((id) => ({ id })) ?? [],

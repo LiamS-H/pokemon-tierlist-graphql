@@ -21,7 +21,7 @@ type Mutation {
   createTemplate(data: TemplateCreateInput!): Template
   createTierlist(data: TierlistCreateInput!): Tierlist
   deleteTierlist(id: String!): Tierlist
-  updateTierlist(data: TierlistCreateInput!, id: String!): Tierlist
+  updateTierlist(data: TierlistUpdateInput!, id: String!): Tierlist
 }
 
 type Pokemon {
@@ -125,6 +125,7 @@ type Tierlist {
   createdAt: DateTime
   id: ID
   pokemons: [Pokemon!]
+  published: Boolean
   tiers: [Tier!]
   title: String
   updatedAt: DateTime
@@ -138,4 +139,11 @@ input TierlistCreateInput {
 
 input TierlistUniqueInput {
   id: String
+}
+
+input TierlistUpdateInput {
+  pokemonIds: [String!]
+  publised: Boolean
+  tiers: [TierCreateInput!]
+  title: String!
 }

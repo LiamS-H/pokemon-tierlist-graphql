@@ -58,6 +58,7 @@ model Attack {
 model Tierlist {
     id        String    @id @default(cuid())
     title     String
+    published Boolean   @default(false)
     pokemons  Pokemon[]
     tiers     Tier[]
     createdAt DateTime  @default(now())
@@ -67,6 +68,7 @@ model Tierlist {
 model Template {
     id        String    @id @default(cuid())
     title     String
+    published Boolean   @default(false)
     pokemons  Pokemon[]
     tiers     String[]
     createdAt DateTime  @default(now())
