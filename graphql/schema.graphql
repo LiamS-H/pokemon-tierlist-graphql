@@ -89,6 +89,7 @@ type Query {
   template(where: TemplateUniqueInput!): Template
   templates: [Template!]
   tierlist(where: TierlistUniqueInput!): Tierlist
+  tierlistList(where: TierlistListInput!): [Tierlist!]
   tierlists: [Tierlist!]
 }
 
@@ -106,7 +107,7 @@ input TemplateCreateInput {
 }
 
 input TemplateUniqueInput {
-  id: String
+  id: String!
 }
 
 type Tier {
@@ -135,6 +136,10 @@ input TierlistCreateInput {
   pokemonIds: [String!]
   tiers: [TierCreateInput!]
   title: String!
+}
+
+input TierlistListInput {
+  ids: [String!]!
 }
 
 input TierlistUniqueInput {

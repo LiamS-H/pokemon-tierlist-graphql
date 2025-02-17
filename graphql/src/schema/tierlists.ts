@@ -40,9 +40,15 @@ const TierlistUniqueInput = builder.inputType('TierlistUniqueInput', {
   }),
 })
 
+const TierlistListInput = builder.inputType('TierlistListInput', {
+  fields: (t) => ({
+    ids: t.stringList({ required: true }),
+  }),
+})
+
 const TemplateUniqueInput = builder.inputType('TemplateUniqueInput', {
   fields: (t) => ({
-    id: t.string(),
+    id: t.string({ required: true }),
   }),
 })
 
@@ -99,6 +105,22 @@ builder.queryFields((t) => ({
       prisma.tierlist.findUnique({
         ...query,
         where: { id: args.where.id ?? undefined },
+      }),
+  }),
+  tierlistList: t.prismaField({
+    type: ['Tierlist'],
+    nullable: true,
+    args: {
+      where: t.arg({ type: TierlistListInput, required: true }),
+    },
+    resolve: (query, parent, args) =>
+      prisma.tierlist.findMany({
+        ...query,
+        where: {
+          id: {
+            in: args.where.ids,
+          },
+        },
       }),
   }),
   templates: t.prismaField({
@@ -179,6 +201,10 @@ builder.mutationFields((t) => ({
       data: t.arg({ type: TierlistUpdateInput, required: true }),
     },
     resolve: async (query, parent, args) => {
+      const old = await prisma.tierlist.findUnique({ where: { id: args.id } })
+      if (old?.published) {
+        return old
+      }
       return prisma.tierlist.update({
         ...query,
         where: { id: args.id },
