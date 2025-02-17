@@ -1,5 +1,3 @@
-// TEMP FIX: for some reason pothos types aren't being inferred correctly
-// @ts-nocheck
 import { builder } from '../builder'
 import { prisma } from '../db'
 
@@ -9,6 +7,8 @@ builder.prismaObject('Tierlist', {
     title: t.exposeString('title'),
     pokemons: t.relation('pokemons'),
     tiers: t.relation('tiers'),
+    createdAt: t.expose('createdAt', { type: 'DateTime' }),
+    updatedAt: t.expose('updatedAt', { type: 'DateTime' }),
   }),
 })
 
@@ -82,7 +82,7 @@ builder.queryFields((t) => ({
     resolve: (query, parent, args) =>
       prisma.tierlist.findUnique({
         ...query,
-        where: { id: args.where.id },
+        where: { id: args.where.id ?? undefined },
       }),
   }),
   templates: t.prismaField({
@@ -98,7 +98,7 @@ builder.queryFields((t) => ({
     resolve: (query, parent, args) =>
       prisma.template.findUnique({
         ...query,
-        where: { id: args.where.id },
+        where: { id: args.where.id ?? undefined },
       }),
   }),
 }))
@@ -113,6 +113,7 @@ builder.mutationFields((t) => ({
       return prisma.tierlist.create({
         ...query,
         data: {
+          updatedAt: Date.now().toString(),
           title: args.data.title,
           pokemons: {
             connect: args.data.pokemonIds?.map((id) => ({ id })) ?? [],

@@ -1,9 +1,5 @@
-// TEMP FIX: for some reason pothos types aren't being inferred correctly
-// @ts-nocheck
-import { ObjectFieldBuilder } from '@pothos/core'
 import { builder } from '../builder'
 import { prisma } from '../db'
-import { Pokemon } from '@prisma/client'
 
 builder.prismaObject('Pokemon', {
   fields: (t) => ({
@@ -66,7 +62,7 @@ export const PokemonUniqueInput = builder.inputType('PokemonUniqueInput', {
 const AttackCreateInput = builder.inputType('AttackCreateInput', {
   fields: (t) => ({
     name: t.string({ required: true }),
-    type: t.string(),
+    type: t.string({ required: true }),
     damage: t.int(),
   }),
 })
@@ -80,7 +76,7 @@ const PokemonAttackCreateInput = builder.inputType('PokemonAttackCreateInput', {
 
 const PokemonCreateInput = builder.inputType('PokemonCreateInput', {
   fields: (t) => ({
-    number: t.string(),
+    number: t.string({ required: true }),
     name: t.string({ required: true }),
     weightMin: t.string(),
     weightMax: t.string(),
@@ -149,6 +145,9 @@ builder.mutationFields((t) => ({
           maxHP: args.data.maxHP,
           evolutionAmount: args.data.evolutionAmount,
           evolutionName: args.data.evolutionName,
+          image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${Number(
+            args.data.number,
+          ).toString()}.png`,
           attacks: args.data.attacks
             ? {
                 create: {

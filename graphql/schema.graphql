@@ -8,7 +8,7 @@ type Attack {
 input AttackCreateInput {
   damage: Int
   name: String!
-  type: String
+  type: String!
 }
 
 """
@@ -70,7 +70,7 @@ input PokemonCreateInput {
   maxCP: Int
   maxHP: Int
   name: String!
-  number: String
+  number: String!
   resistant: [String!]
   types: [String!]
   weaknesses: [String!]
@@ -122,10 +122,12 @@ input TierCreateInput {
 }
 
 type Tierlist {
+  createdAt: DateTime
   id: ID
   pokemons: [Pokemon!]
   tiers: [Tier!]
   title: String
+  updatedAt: DateTime
 }
 
 input TierlistCreateInput {
