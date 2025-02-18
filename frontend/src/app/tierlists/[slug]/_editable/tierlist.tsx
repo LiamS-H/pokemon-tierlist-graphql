@@ -7,6 +7,7 @@ import { useEditableTierlist_tierlist$key } from "./__generated__/useEditableTie
 import { useEditableTierlist } from "./useEditableTierlist";
 import { Tier } from "./tier";
 import { PokemonItem } from "./item";
+import { PokemonPool } from "./pokemonPool";
 
 export function Editable({
     fragment,
@@ -17,7 +18,7 @@ export function Editable({
         tierlist,
         setTitle,
         publishTierlist,
-        setPokemon,
+        addPokemon,
         deleteTierlist,
         createTier,
         setTier,
@@ -82,13 +83,13 @@ export function Editable({
 
             setTier(destinationId, undefined, newIds);
 
-            const unusedPokemons = getUnusedPokemons();
-            if (unusedPokemons.some((p) => p.id === pokemonId)) {
-                const newPokemonList = unusedPokemons
-                    .filter((p) => p.id !== pokemonId)
-                    .map((p) => p.id);
-                setPokemon(newPokemonList);
-            }
+            // const unusedPokemons = getUnusedPokemons();
+            // if (unusedPokemons.some((p) => p.id === pokemonId)) {
+            //     const newPokemonList = unusedPokemons
+            //         .filter((p) => p.id !== pokemonId)
+            //         .map((p) => p.id);
+            //     setPokemon(newPokemonList);
+            // }
         } else if (sourceId !== "tray" && destinationId === "tray") {
             const sourceTier = (tierlist.tiers ?? []).find(
                 (t) => t.id === sourceId
@@ -101,14 +102,14 @@ export function Editable({
 
             setTier(sourceId, undefined, newSourceIds);
 
-            const unusedPokemons = getUnusedPokemons();
-            if (!unusedPokemons.some((p) => p.id === pokemonId)) {
-                const newPokemonList = [
-                    ...unusedPokemons.map((p) => p.id),
-                    pokemonId,
-                ];
-                setPokemon(newPokemonList);
-            }
+            // const unusedPokemons = getUnusedPokemons();
+            // if (!unusedPokemons.some((p) => p.id === pokemonId)) {
+            //     const newPokemonList = [
+            //         ...unusedPokemons.map((p) => p.id),
+            //         pokemonId,
+            //     ];
+            //     setPokemon(newPokemonList);
+            // }
         } else if (sourceId !== "tray" && destinationId !== "tray") {
             const sourceTier = (tierlist.tiers ?? []).find(
                 (t) => t.id === sourceId
@@ -232,6 +233,12 @@ export function Editable({
                     </Droppable>
                 </div>
             </DragDropContext>
+            <div>
+                <PokemonPool
+                    addPokemon={addPokemon}
+                    usedPokemon={tierlist.pokemons?.map(({ id }) => id) || []}
+                />
+            </div>
         </div>
     );
 }
