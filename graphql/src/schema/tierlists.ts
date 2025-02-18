@@ -27,7 +27,7 @@ builder.prismaObject('Template', {
 
 builder.prismaObject('Tier', {
   fields: (t) => ({
-    id: t.exposeInt('id', { nullable: false }),
+    id: t.exposeString('id', { nullable: false }),
     title: t.exposeString('title', { nullable: false }),
     tierlist: t.relation('tierlist', { nullable: true }),
     pokemons: t.relation('pokemons'),

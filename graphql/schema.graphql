@@ -111,7 +111,7 @@ input TemplateUniqueInput {
 }
 
 type Tier {
-  id: Int!
+  id: String!
   pokemons: [Pokemon!]
   tierlist: Tierlist
   title: String!

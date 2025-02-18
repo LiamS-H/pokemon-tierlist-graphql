@@ -76,7 +76,7 @@ model Template {
 }
 
 model Tier {
-    id         Int       @id @default(autoincrement())
+    id         String    @id @default(cuid())
     title      String
     tierlist   Tierlist? @relation(fields: [tierlistId], references: [id])
     tierlistId String?
