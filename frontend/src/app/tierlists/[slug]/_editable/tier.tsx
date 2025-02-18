@@ -105,6 +105,7 @@ export function Tier({
                     >
                         {tier.pokemons?.map((pokemon, index) => (
                             <PokemonItem
+                                key={pokemon.id}
                                 id={pokemon.id}
                                 pokemon={pokemon}
                                 index={index}
