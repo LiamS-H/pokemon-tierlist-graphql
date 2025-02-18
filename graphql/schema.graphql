@@ -35,11 +35,11 @@ type Pokemon {
   heightMax: String
   heightMin: String
   id: ID!
-  image: String
+  image: String!
   maxCP: Int
   maxHP: Int
-  name: String
-  number: String
+  name: String!
+  number: String!
   resistant: [String!]
   types: [String!]
   weaknesses: [String!]

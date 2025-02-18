@@ -4,8 +4,8 @@ import { prisma } from '../db'
 builder.prismaObject('Pokemon', {
   fields: (t) => ({
     id: t.exposeID('id', { nullable: false }),
-    number: t.exposeString('number', { nullable: true }),
-    name: t.exposeString('name', { nullable: true }),
+    number: t.exposeString('number', { nullable: false }),
+    name: t.exposeString('name', { nullable: false }),
     weightMin: t.exposeString('weightMin', { nullable: true }),
     weightMax: t.exposeString('weightMax', { nullable: true }),
     heightMin: t.exposeString('heightMin', { nullable: true }),
@@ -28,7 +28,7 @@ builder.prismaObject('Pokemon', {
     maxHP: t.exposeInt('maxHP', { nullable: true }),
     evolutionAmount: t.exposeInt('evolutionAmount', { nullable: true }),
     evolutionName: t.exposeString('evolutionName', { nullable: true }),
-    image: t.exposeString('image', { nullable: true }),
+    image: t.exposeString('image', { nullable: false }),
     attacks: t.relation('attacks'),
     evolutions: t.relation('evolutions'),
     evolvedFrom: t.relation('evolvedFrom', { nullable: true }),
