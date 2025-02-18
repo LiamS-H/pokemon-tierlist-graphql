@@ -148,7 +148,7 @@ input TierlistUniqueInput {
 
 input TierlistUpdateInput {
   pokemonIds: [String!]
-  publised: Boolean
+  published: Boolean
   tiers: [TierCreateInput!]
   title: String
 }

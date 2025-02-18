@@ -71,7 +71,7 @@ const TierlistUpdateInput = builder.inputType('TierlistUpdateInput', {
     title: t.string(),
     pokemonIds: t.stringList(),
     tiers: t.field({ type: [TierCreateInput] }),
-    publised: t.boolean(),
+    published: t.boolean(),
   }),
 })
 
@@ -209,7 +209,7 @@ builder.mutationFields((t) => ({
         ...query,
         where: { id: args.id },
         data: {
-          published: args.data.publised ?? undefined,
+          published: args.data.published ?? undefined,
           title: args.data.title ?? undefined,
           pokemons: {
             set: args.data.pokemonIds?.map((id) => ({ id })) ?? [],
