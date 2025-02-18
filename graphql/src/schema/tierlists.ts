@@ -212,17 +212,17 @@ builder.mutationFields((t) => ({
           published: args.data.published ?? undefined,
           title: args.data.title ?? undefined,
           pokemons: {
-            set: args.data.pokemonIds?.map((id) => ({ id })) ?? [],
+            set: args.data.pokemonIds?.map((id) => ({ id })) ?? undefined,
           },
           tiers: {
-            deleteMany: {},
+            deleteMany: args.data.tiers ? {} : undefined,
             create:
               args.data.tiers?.map((tier) => ({
                 title: tier.title,
                 pokemons: {
-                  connect: tier.pokemonIds?.map((id) => ({ id })) ?? [],
+                  connect: tier.pokemonIds?.map((id) => ({ id })) ?? undefined,
                 },
-              })) ?? [],
+              })) ?? undefined,
           },
         },
       })
