@@ -27,35 +27,33 @@ export function PokemonThumnail({
     const dimension = 96 * size;
 
     return (
-        <Link href={`/pokemon/${pokemon.number}`}>
-            <Card
-                className="relative aspect-square w-fit"
-                style={{
-                    width: dimension,
-                    height: dimension,
-                }}
+        <Card
+            className="relative aspect-square w-fit"
+            style={{
+                width: dimension,
+                height: dimension,
+            }}
+        >
+            <Badge
+                className={`absolute ${
+                    size === 1 ? "top-1 left-1" : "top-2 left-2"
+                }`}
             >
-                <Badge
-                    className={`absolute ${
-                        size === 1 ? "top-1 left-1" : "top-2 left-2"
-                    }`}
-                >
-                    {pokemon.name}
-                </Badge>
-                <Badge
-                    className={`absolute ${
-                        size === 1 ? "bottom-1 right-1" : "bottom-2 right-2"
-                    }`}
-                    variant="secondary"
-                >
-                    {pokemon.number}
-                </Badge>
-                <PokemonImage
-                    dimension={dimension}
-                    image={pokemon.image}
-                    name={pokemon.name}
-                />
-            </Card>
-        </Link>
+                {pokemon.name}
+            </Badge>
+            <Badge
+                className={`absolute ${
+                    size === 1 ? "bottom-1 right-1" : "bottom-2 right-2"
+                }`}
+                variant="secondary"
+            >
+                {pokemon.number}
+            </Badge>
+            <PokemonImage
+                dimension={dimension}
+                image={pokemon.image}
+                name={pokemon.name}
+            />
+        </Card>
     );
 }

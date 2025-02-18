@@ -3,11 +3,12 @@ import { useLazyLoadQuery, graphql } from "react-relay";
 import { layoutGetAllPokemonImagesAndNamesQuery } from "./__generated__/layoutGetAllPokemonImagesAndNamesQuery.graphql";
 import { PokemonThumnail } from "@/components/pokemonThumbnail";
 import { type ReactNode } from "react";
+import Link from "next/link";
 
 const getPokemon = graphql`
     query layoutGetAllPokemonImagesAndNamesQuery {
         allPokemons {
-            id
+            number
             ...pokemonThumbnail_pokemon
         }
     }
@@ -30,11 +31,13 @@ export default function Page({ children }: { children: ReactNode }) {
             <div className="absolute h-full flex justify-center w-full overflow-auto">
                 <ul className="flex flex-wrap gap-1 max-w-3xl">
                     {allPokemons.map((pokemon) => (
-                        <li key={pokemon.id}>
-                            <PokemonThumnail
-                                pokemonFragment={pokemon}
-                                size={1}
-                            />
+                        <li key={pokemon.number}>
+                            <Link href={`/pokemon/${pokemon.number}`}>
+                                <PokemonThumnail
+                                    pokemonFragment={pokemon}
+                                    size={1}
+                                />
+                            </Link>
                         </li>
                     ))}
                 </ul>
