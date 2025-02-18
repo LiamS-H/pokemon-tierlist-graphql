@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useRelayEnvironment } from "react-relay";
+import { storageCreateTierlist } from "@/lib/localStorage";
 
 export function CreateTierlistButton({
     title,
@@ -30,6 +31,7 @@ export function CreateTierlistButton({
             }
             push(`/tierlists/${data.id}`);
             toast("Tierlist created!");
+            storageCreateTierlist(data.id);
         } catch (e) {
             console.log(e);
             toast("Something went wrong.");
