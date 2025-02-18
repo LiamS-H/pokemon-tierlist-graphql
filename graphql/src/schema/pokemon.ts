@@ -3,7 +3,7 @@ import { prisma } from '../db'
 
 builder.prismaObject('Pokemon', {
   fields: (t) => ({
-    id: t.exposeID('id'),
+    id: t.exposeID('id', { nullable: false }),
     number: t.exposeString('number', { nullable: true }),
     name: t.exposeString('name', { nullable: true }),
     weightMin: t.exposeString('weightMin', { nullable: true }),
@@ -36,7 +36,7 @@ builder.prismaObject('Pokemon', {
 })
 builder.prismaObject('Attack', {
   fields: (t) => ({
-    id: t.exposeID('id'),
+    id: t.exposeID('id', { nullable: false }),
     name: t.exposeString('name', { nullable: true }),
     type: t.exposeString('type', { nullable: true }),
     damage: t.exposeInt('damage', { nullable: true }),
@@ -45,7 +45,7 @@ builder.prismaObject('Attack', {
 
 builder.prismaObject('PokemonAttack', {
   fields: (t) => ({
-    id: t.exposeID('id'),
+    id: t.exposeID('id', { nullable: false }),
     pokemon: t.relation('pokemon'),
     fast: t.relation('fast'),
     special: t.relation('special'),

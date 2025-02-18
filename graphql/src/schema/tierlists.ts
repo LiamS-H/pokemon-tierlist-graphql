@@ -3,10 +3,10 @@ import { prisma } from '../db'
 
 builder.prismaObject('Tierlist', {
   fields: (t) => ({
-    id: t.exposeID('id'),
-    title: t.exposeString('title'),
+    id: t.exposeID('id', { nullable: false }),
+    title: t.exposeString('title', { nullable: false }),
     pokemons: t.relation('pokemons'),
-    published: t.exposeBoolean('published'),
+    published: t.exposeBoolean('published', { nullable: false }),
     tiers: t.relation('tiers'),
     createdAt: t.expose('createdAt', { type: 'DateTime' }),
     updatedAt: t.expose('updatedAt', { type: 'DateTime' }),
@@ -15,8 +15,8 @@ builder.prismaObject('Tierlist', {
 
 builder.prismaObject('Template', {
   fields: (t) => ({
-    id: t.exposeID('id'),
-    title: t.exposeString('title'),
+    id: t.exposeID('id', { nullable: false }),
+    title: t.exposeString('title', { nullable: false }),
     pokemons: t.relation('pokemons'),
     tiers: t.field({
       type: ['String'],
@@ -27,8 +27,8 @@ builder.prismaObject('Template', {
 
 builder.prismaObject('Tier', {
   fields: (t) => ({
-    id: t.exposeInt('id'),
-    title: t.exposeString('title'),
+    id: t.exposeInt('id', { nullable: false }),
+    title: t.exposeString('title', { nullable: false }),
     tierlist: t.relation('tierlist', { nullable: true }),
     pokemons: t.relation('pokemons'),
   }),
@@ -36,7 +36,7 @@ builder.prismaObject('Tier', {
 
 const TierlistUniqueInput = builder.inputType('TierlistUniqueInput', {
   fields: (t) => ({
-    id: t.string(),
+    id: t.string({ required: true }),
   }),
 })
 
@@ -68,7 +68,7 @@ const TierlistCreateInput = builder.inputType('TierlistCreateInput', {
 })
 const TierlistUpdateInput = builder.inputType('TierlistUpdateInput', {
   fields: (t) => ({
-    title: t.string({ required: true }),
+    title: t.string(),
     pokemonIds: t.stringList(),
     tiers: t.field({ type: [TierCreateInput] }),
     publised: t.boolean(),
@@ -210,7 +210,7 @@ builder.mutationFields((t) => ({
         where: { id: args.id },
         data: {
           published: args.data.publised ?? undefined,
-          title: args.data.title,
+          title: args.data.title ?? undefined,
           pokemons: {
             set: args.data.pokemonIds?.map((id) => ({ id })) ?? [],
           },
