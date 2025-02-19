@@ -167,7 +167,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                 ...optimisticResponseSpread,
             },
         };
-        console.log(optimisticResponse);
+        // console.log(optimisticResponse);
         if (!tierlist.id) return;
 
         updateTierlist({

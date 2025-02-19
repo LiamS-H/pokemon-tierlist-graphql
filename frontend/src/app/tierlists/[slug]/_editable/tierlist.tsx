@@ -84,7 +84,6 @@ export function Editable({
 
             tierlist.pokemons?.forEach(({ pokemon: { id } }) => {
                 if (!pokemonIds.includes(id)) {
-                    console.log(id);
                     pokemonIds.push(id);
                 }
             });

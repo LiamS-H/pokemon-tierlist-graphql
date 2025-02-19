@@ -1,6 +1,6 @@
 import { Droppable } from "@hello-pangea/dnd";
 import { PokemonItem } from "./item";
-import { useState, type ComponentProps } from "react";
+import { type ComponentProps } from "react";
 
 export function PokemonTray({
     pokemons,
@@ -14,8 +14,6 @@ export function PokemonTray({
     }[];
     isDragging: boolean;
 }) {
-    const [isEditing, setIsEditing] = useState(false);
-
     return (
         <div className="flex flex-col">
             <Droppable droppableId="tray" direction="vertical">

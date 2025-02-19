@@ -3,7 +3,6 @@ import { useLazyLoadQuery, graphql } from "react-relay";
 import { layoutGetAllPokemonImagesAndNamesQuery } from "./__generated__/layoutGetAllPokemonImagesAndNamesQuery.graphql";
 import { PokemonThumnail } from "@/components/pokemonThumbnail";
 import { type ReactNode } from "react";
-import Link from "next/link";
 
 const getPokemon = graphql`
     query layoutGetAllPokemonImagesAndNamesQuery {
