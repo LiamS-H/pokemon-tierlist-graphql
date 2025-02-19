@@ -32,7 +32,7 @@ export default function Page() {
     }
 
     return (
-        <Suspense fallback={"loading tierlist"}>
+        <Suspense fallback={<Loading />}>
             <Tierlist preloadedQuery={queryRefference} />
         </Suspense>
     );
