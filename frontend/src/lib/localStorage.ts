@@ -16,19 +16,11 @@ export function storageGetTierlists(): ILocalTierlists {
     try {
         const localTierlists: ILocalTierlists = JSON.parse(store);
         if (!Array.isArray(localTierlists.published)) return reset();
-        if (
-            !localTierlists.published.every((s) => {
-                s === s.toString();
-            })
-        ) {
+        if (!localTierlists.published.every((s) => s === s.toString())) {
             return reset();
         }
         if (!Array.isArray(localTierlists.unPublished)) return reset();
-        if (
-            !localTierlists.published.every((s) => {
-                s === s.toString();
-            })
-        ) {
+        if (!localTierlists.published.every((s) => s === s.toString())) {
             return reset();
         }
         return localTierlists;
