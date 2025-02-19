@@ -18,6 +18,7 @@ import {
     storageDeleteTierlist,
     storagePublishTierlist,
 } from "@/lib/localStorage";
+import { publish } from "@/api/publish";
 
 type IOptimisticResponseSpread = Partial<{
     title: string;
@@ -196,6 +197,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
 
     function publishTierlist() {
         storagePublishTierlist(tierlist.id);
+        publish();
         runUpdateMutation(
             {
                 published: true,

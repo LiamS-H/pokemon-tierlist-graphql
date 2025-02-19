@@ -10,6 +10,7 @@ import { PokemonPool } from "./pokemonPool";
 import { TimeAgo } from "@/components/ui/timeAgo";
 import { EditText } from "@/components/ui/editText";
 import { PokemonTray } from "./tray";
+import { useRouter } from "next/navigation";
 
 export function Editable({
     fragment,
@@ -29,6 +30,7 @@ export function Editable({
     } = useEditableTierlist(fragment);
 
     const [isDragging, setIsDragging] = useState(false);
+    const { push: pushRoute } = useRouter();
 
     const onDragStart = () => {
         setIsDragging(true);
@@ -184,11 +186,19 @@ export function Editable({
                     </Badge>
                 </div>
                 <div className="flex items-center mt-2 space-x-2">
-                    <Button onClick={publishTierlist} size="sm">
+                    <Button
+                        onClick={() => {
+                            publishTierlist();
+                        }}
+                        size="sm"
+                    >
                         Publish
                     </Button>
                     <Button
-                        onClick={deleteTierlist}
+                        onClick={() => {
+                            deleteTierlist();
+                            pushRoute("/");
+                        }}
                         variant="destructive"
                         size="sm"
                     >
