@@ -29,15 +29,14 @@ export default function Page({ children }: { children: ReactNode }) {
     return (
         <div className="w-full h-full relative">
             <div className="absolute h-full flex justify-center w-full overflow-auto">
-                <ul className="flex flex-wrap gap-1 max-w-3xl">
+                <ul className="flex flex-wrap gap-1 max-w-3xl justify-center">
                     {allPokemons.map((pokemon) => (
                         <li key={pokemon.number}>
-                            <Link href={`/pokemon/${pokemon.number}`}>
-                                <PokemonThumnail
-                                    pokemonFragment={pokemon}
-                                    size={1}
-                                />
-                            </Link>
+                            <PokemonThumnail
+                                pokemonFragment={pokemon}
+                                size={1}
+                                link
+                            />
                         </li>
                     ))}
                 </ul>

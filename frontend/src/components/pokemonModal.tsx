@@ -15,9 +15,11 @@ import { pokemonModal_pokemon$key } from "./__generated__/pokemonModal_pokemon.g
 export function PokemonModal({
     fragment,
     buttons,
+    linkPokemon,
 }: {
     fragment: pokemonModal_pokemon$key;
     buttons: ReactNode;
+    linkPokemon?: true;
 }) {
     const pokemon = useFragment(
         graphql`
@@ -95,6 +97,7 @@ export function PokemonModal({
                                     <PokemonThumnail
                                         pokemonFragment={pokemon.evolvedFrom}
                                         size={2}
+                                        link={linkPokemon}
                                     />
                                 ) : (
                                     <Badge variant="destructive">none</Badge>
@@ -108,6 +111,7 @@ export function PokemonModal({
                                             key={pokemon.id}
                                             pokemonFragment={pokemon}
                                             size={2}
+                                            link={linkPokemon}
                                         />
                                     ))
                                 ) : (

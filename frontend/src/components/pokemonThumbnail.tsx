@@ -3,13 +3,16 @@ import { Card } from "./ui/card";
 import { pokemonThumbnail_pokemon$key } from "./__generated__/pokemonThumbnail_pokemon.graphql";
 import { Badge } from "./ui/badge";
 import { PokemonImage } from "./pokemonImage";
+import Link from "next/link";
 
 export function PokemonThumnail({
     pokemonFragment,
     size = 1,
+    link,
 }: {
     pokemonFragment: pokemonThumbnail_pokemon$key;
     size?: 1 | 2 | 3 | 4;
+    link?: true;
 }) {
     const pokemon = useFragment(
         graphql`
@@ -24,8 +27,7 @@ export function PokemonThumnail({
     );
 
     const dimension = 96 * size;
-
-    return (
+    const card = (
         <Card
             className="relative aspect-square w-fit"
             style={{
@@ -55,4 +57,10 @@ export function PokemonThumnail({
             />
         </Card>
     );
+
+    if (link) {
+        return <Link href={`/pokemon/${pokemon.number}`}>{card}</Link>;
+    }
+
+    return card;
 }

@@ -42,6 +42,7 @@ export function PokemonClientPage({
 
     return (
         <PokemonModal
+            linkPokemon
             fragment={pokemon}
             buttons={
                 <>
