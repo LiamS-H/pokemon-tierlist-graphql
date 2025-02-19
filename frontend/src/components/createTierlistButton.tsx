@@ -33,7 +33,7 @@ export function CreateTierlistButton({
             toast("Tierlist created!");
             storageCreateTierlist(data.id);
         } catch (e) {
-            console.log(e);
+            console.error(e);
             toast("Something went wrong.");
         }
     }
