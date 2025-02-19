@@ -5,6 +5,7 @@ import { useParams, notFound } from "next/navigation";
 import { Suspense } from "react";
 import { pageTierlistQuery } from "./__generated__/pageTierlistQuery.graphql";
 import { Tierlist } from "./tierlist";
+import Loading from "./loading";
 
 export default function Page() {
     const { slug } = useParams();
@@ -27,7 +28,7 @@ export default function Page() {
         loadQuery({ id: slug.toString() });
     }
     if (!queryRefference) {
-        return null;
+        return <Loading />;
     }
 
     return (
