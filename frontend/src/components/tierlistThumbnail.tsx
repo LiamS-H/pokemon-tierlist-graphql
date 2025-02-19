@@ -63,7 +63,7 @@ export function TierlistThumbnail({
             </div>
             <div className="absolute bottom-2 w-full flex justify-center">
                 <Link href={`/tierlists/${tierlist.id}`}>
-                    <Button>View Tierlist</Button>
+                    <Button variant="secondary">View Tierlist</Button>
                 </Link>
             </div>
         </Card>
