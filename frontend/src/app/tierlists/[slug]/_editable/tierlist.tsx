@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Cloud, Edit2, FileCheck, PlusCircle, Save } from "lucide-react";
+import { Edit2, FileCheck, PlusCircle } from "lucide-react";
 import { useEditableTierlist_tierlist$key } from "./__generated__/useEditableTierlist_tierlist.graphql";
 import { useEditableTierlist } from "./useEditableTierlist";
 import { Tier } from "./tier";
-import { PokemonItem } from "./item";
 import { PokemonPool } from "./pokemonPool";
 import { TimeAgo } from "@/components/ui/timeAgo";
 import { EditText } from "@/components/ui/editText";
@@ -84,7 +83,10 @@ export function Editable({
             pokemonIds?.splice(destination.index, 0, pokemonId);
 
             tierlist.pokemons?.forEach(({ pokemon: { id } }) => {
-                if (!pokemonIds.includes(id)) pokemonIds.push(id);
+                if (!pokemonIds.includes(id)) {
+                    console.log(id);
+                    pokemonIds.push(id);
+                }
             });
 
             setPokemon(pokemonIds);
@@ -128,7 +130,6 @@ export function Editable({
                 .filter((id) => id !== pokemonId);
 
             const pokemonIds = unusedPokemons.map(({ pokemon }) => pokemon.id);
-            pokemonIds.splice(source.index, 1);
             pokemonIds.splice(destination.index, 0, pokemonId);
 
             tierlist.pokemons?.forEach(({ pokemon: { id } }) => {
