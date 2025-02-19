@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LocalTierlists } from "./_local-tierlists";
+import { LocalTierlists } from "./local-tierlists";
 import { CreateTierlistButton } from "@/components/createTierlistButton";
 
 export default function Home() {
