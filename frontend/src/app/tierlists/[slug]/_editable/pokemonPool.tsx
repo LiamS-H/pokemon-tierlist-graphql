@@ -36,8 +36,8 @@ export function PokemonPool({
     }
 
     return (
-        <div className="absolute h-full flex justify-center w-full overflow-auto">
-            <ul className="flex flex-wrap gap-1 max-w-3xl">
+        <div className="h-full flex justify-center w-full">
+            <ul className="flex flex-wrap gap-1 max-w-3xl justify-center">
                 {allPokemons.map((pokemon) => {
                     const { id, number, name, image } = pokemon;
                     return (

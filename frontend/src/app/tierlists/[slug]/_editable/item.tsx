@@ -24,7 +24,7 @@ export function PokemonItem({
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className={`${snapshot.isDragging ? "shadow-lg" : ""} ${
+                    className={`m-1 ${snapshot.isDragging ? "shadow-lg" : ""} ${
                         isDragDisabled
                             ? "cursor-not-allowed opacity-70"
                             : "cursor-grab"

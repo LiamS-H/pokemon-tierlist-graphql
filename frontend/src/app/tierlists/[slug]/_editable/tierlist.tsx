@@ -2,12 +2,14 @@ import { useState } from "react";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { Cloud, Edit2, FileCheck, PlusCircle, Save } from "lucide-react";
 import { useEditableTierlist_tierlist$key } from "./__generated__/useEditableTierlist_tierlist.graphql";
 import { useEditableTierlist } from "./useEditableTierlist";
 import { Tier } from "./tier";
 import { PokemonItem } from "./item";
 import { PokemonPool } from "./pokemonPool";
+import { TimeAgo } from "@/components/ui/timeAgo";
+import { EditText } from "@/components/ui/editText";
 
 export function Editable({
     fragment,
@@ -34,7 +36,6 @@ export function Editable({
 
     const onDragEnd = (result: DropResult) => {
         setIsDragging(false);
-        console.log("onDragEnd");
 
         const { destination, source, draggableId } = result;
 
@@ -167,19 +168,21 @@ export function Editable({
 
     return (
         <div className="max-w-4xl mx-auto p-4">
-            <div className="mb-6">
-                <input
-                    type="text"
-                    value={tierlist.title || ""}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="text-3xl font-bold w-full border-none focus:outline-none focus:ring-2 focus:ring-blue-500 px-2 py-1 rounded"
-                    placeholder="Tierlist Title"
-                />
-                <div className="flex items-center mt-2 space-x-2">
-                    <Badge variant="outline" className="text-sm">
-                        Last updated:{" "}
-                        {new Date(tierlist.updatedAt).toLocaleDateString()}
+            <div className="mb-6 flex justify-between items-start">
+                <div>
+                    <EditText text={tierlist.title} setText={setTitle}>
+                        <h1 className="text-5xl">{tierlist.title}</h1>
+                        <Edit2 />
+                    </EditText>
+                    <Badge
+                        variant="outline"
+                        className="text-sm h-fit w-fit flex align-text-bottom"
+                    >
+                        <FileCheck className="w-3 h-3 mr-1" />
+                        <TimeAgo timestamp={tierlist.updatedAt} />
                     </Badge>
+                </div>
+                <div className="flex items-center mt-2 space-x-2">
                     <Button onClick={publishTierlist} size="sm">
                         Publish
                     </Button>
@@ -194,71 +197,73 @@ export function Editable({
             </div>
 
             <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-                {/* Tiers */}
-                <div className="space-y-4">
-                    {tierlist.tiers?.map((tier, index) => (
-                        <Tier
-                            key={tier.id}
-                            index={index}
-                            tierFragment={tier}
-                            onEdit={(id, title) => setTiers([{ id, title }])}
-                            onDelete={deleteTier}
-                            isDragDisabled={isDragging}
-                        />
-                    ))}
+                <div className="flex gap-2">
+                    {/* Tiers */}
+                    <div className="flex flex-grow flex-col space-y-4">
+                        {tierlist.tiers?.map((tier, index) => (
+                            <Tier
+                                key={tier.id}
+                                index={index}
+                                tierFragment={tier}
+                                onEdit={(title) => {
+                                    setTiers([{ id: tier.id, title }]);
+                                }}
+                                onDelete={deleteTier}
+                                isDragDisabled={isDragging}
+                            />
+                        ))}
 
-                    <Button
-                        onClick={createTier}
-                        variant="outline"
-                        className="mt-4 w-full"
-                    >
-                        <PlusCircle className="h-4 w-4 mr-2" />
-                        Add New Tier
-                    </Button>
-                </div>
+                        <Button
+                            onClick={createTier}
+                            variant="outline"
+                            className="mt-4 w-full"
+                        >
+                            <PlusCircle className="h-4 w-4 mr-2" />
+                            Add New Tier
+                        </Button>
+                        <div>
+                            <PokemonPool
+                                addPokemon={addPokemon}
+                                usedPokemon={
+                                    tierlist.pokemons?.map(
+                                        ({ pokemon }) => pokemon.id
+                                    ) || []
+                                }
+                            />
+                        </div>
+                    </div>
 
-                {/* Pokemon Tray */}
-                <div className="mt-8">
-                    <h2 className="text-xl font-semibold mb-4">
-                        Available Pokemon
-                    </h2>
-                    <Droppable droppableId="tray" direction="horizontal">
-                        {(provided, snapshot) => (
-                            <div
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                className={`flex flex-wrap gap-2 min-h-24 p-4 border-2 border-dashed rounded-lg ${
-                                    snapshot.isDraggingOver
-                                        ? "bg-slate-100 border-slate-300"
-                                        : "border-slate-200"
-                                }`}
-                            >
-                                {getUnusedPokemons().map(
-                                    ({ pokemon }, index) => (
-                                        <PokemonItem
-                                            key={pokemon.id}
-                                            id={pokemon.id}
-                                            pokemon={pokemon}
-                                            index={index}
-                                            isDragDisabled={isDragging}
-                                        />
-                                    )
-                                )}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
+                    {/* Pokemon Tray */}
+                    <div className="flex flex-col">
+                        <Droppable droppableId="tray" direction="vertical">
+                            {(provided, snapshot) => (
+                                <div
+                                    ref={provided.innerRef}
+                                    {...provided.droppableProps}
+                                    className={`flex flex-col min-h-[139.2px] min-w-[139.2px] p-4 border-2 border-dashed rounded-lg ${
+                                        snapshot.isDraggingOver
+                                            ? "bg-slate-100 border-slate-300"
+                                            : "border-slate-200"
+                                    }`}
+                                >
+                                    {getUnusedPokemons().map(
+                                        ({ pokemon }, index) => (
+                                            <PokemonItem
+                                                key={pokemon.id}
+                                                id={pokemon.id}
+                                                pokemon={pokemon}
+                                                index={index}
+                                                isDragDisabled={isDragging}
+                                            />
+                                        )
+                                    )}
+                                    {provided.placeholder}
+                                </div>
+                            )}
+                        </Droppable>
+                    </div>
                 </div>
             </DragDropContext>
-            <div>
-                <PokemonPool
-                    addPokemon={addPokemon}
-                    usedPokemon={
-                        tierlist.pokemons?.map(({ pokemon }) => pokemon.id) ||
-                        []
-                    }
-                />
-            </div>
         </div>
     );
 }
