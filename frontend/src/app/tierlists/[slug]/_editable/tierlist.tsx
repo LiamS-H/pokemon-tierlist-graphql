@@ -111,8 +111,6 @@ export function Editable({
                 .map(({ pokemon }) => pokemon.id)
                 .filter((id) => id !== pokemonId);
 
-            setTiers([{ id: sourceId, pokemonIds: newSourceIds }]);
-
             const pokemonIds = tierlist.pokemons?.map(
                 ({ pokemon }) => pokemon.id
             );
@@ -120,7 +118,7 @@ export function Editable({
             pokemonIds?.splice(pokemonIds.indexOf(pokemonId), 1);
             pokemonIds?.splice(destination.index, 0, pokemonId);
 
-            setPokemon(pokemonIds);
+            setTiers([{ id: sourceId, pokemonIds: newSourceIds }], pokemonIds);
             return;
         }
         if (sourceId !== "tray" && destinationId !== "tray") {

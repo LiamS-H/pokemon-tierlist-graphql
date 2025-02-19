@@ -1,3 +1,6 @@
+// TODO: look into @updatable directives with linked and assigneable data
+// https://relay.dev/docs/guided-tour/updating-data/imperatively-modifying-linked-fields/
+
 import { useFragment, useMutation } from "react-relay";
 import { graphql } from "relay-runtime";
 import {
@@ -10,6 +13,37 @@ import {
     useEditableTierlistUpdateMutation$variables,
 } from "./__generated__/useEditableTierlistUpdateMutation.graphql";
 import { useEditableTierlistDeleteMutation } from "./__generated__/useEditableTierlistDeleteMutation.graphql";
+
+type IOptimisticResponseSpread = Partial<{
+    title: string;
+    published: boolean;
+    tiers: readonly {
+        id: string;
+        title: string;
+        pokemons:
+            | readonly {
+                  readonly pokemon: {
+                      id: string;
+                      name: string;
+                      number: string;
+                      image: string;
+                  };
+              }[]
+            | null
+            | undefined;
+    }[];
+    pokemons:
+        | readonly {
+              readonly pokemon: {
+                  id: string;
+                  name: string;
+                  number: string;
+                  image: string;
+              };
+          }[]
+        | null
+        | undefined;
+}>;
 
 const tierlistFragment = graphql`
     fragment useEditableTierlist_tierlist on Tierlist {
@@ -56,7 +90,8 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
     }) => void;
     setPokemon: (ids: string[]) => void;
     setTiers: (
-        tiers: { id: string; title?: string; pokemonIds?: string[] }[]
+        tiers: { id: string; title?: string; pokemonIds?: string[] }[],
+        pokemon?: string[]
     ) => void;
     createTier: () => void;
     deleteTier: (id: string) => void;
@@ -100,36 +135,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
 
     const runUpdateMutation = (
         input: useEditableTierlistUpdateMutation$variables["input"],
-        optimisticResponseSpread: Partial<{
-            title: string;
-            published: boolean;
-            tiers: readonly {
-                id: string;
-                title: string;
-                pokemons:
-                    | readonly {
-                          readonly pokemon: {
-                              id: string;
-                              name: string;
-                              number: string;
-                              image: string;
-                          };
-                      }[]
-                    | null
-                    | undefined;
-            }[];
-            pokemons:
-                | readonly {
-                      readonly pokemon: {
-                          id: string;
-                          name: string;
-                          number: string;
-                          image: string;
-                      };
-                  }[]
-                | null
-                | undefined;
-        }>
+        optimisticResponseSpread: IOptimisticResponseSpread
     ) => {
         const optimisticResponse = {
             updateTierlist: {
@@ -170,19 +176,20 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                 id: tierlist.id,
             },
             optimisticResponse,
+            optimisticUpdater: (store) => {},
         });
     };
 
-    const setTitle = (title: string) => {
+    function setTitle(title: string) {
         runUpdateMutation(
             {
                 title,
             },
             { title }
         );
-    };
+    }
 
-    const publishTierlist = () => {
+    function publishTierlist() {
         runUpdateMutation(
             {
                 published: true,
@@ -191,23 +198,23 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                 published: true,
             }
         );
-    };
+    }
 
-    const deleteTierlist = () => {
+    function deleteTierlist() {
         if (!tierlist.id) return;
         deleteTierlistMutation({
             variables: {
                 id: tierlist.id,
             },
         });
-    };
+    }
 
-    const addPokemon = (pokemon: {
+    function addPokemon(pokemon: {
         id: string;
         name: string;
         image: string;
         number: string;
-    }) => {
+    }) {
         const new_pokemons = [...(tierlist.pokemons || []), { pokemon }];
         const input = {
             pokemonIds: new_pokemons?.map(({ pokemon }) => pokemon.id),
@@ -224,9 +231,9 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                 })
             ),
         });
-    };
+    }
 
-    const setPokemon = (ids: string[]) => {
+    function setPokemon(ids: string[]) {
         const input = {
             pokemonIds: ids,
         };
@@ -238,15 +245,16 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                     pokemon,
                 })),
         });
-    };
+    }
 
-    const setTiers = (
+    function setTiers(
         updatedTiers: {
             id: string;
             title?: string;
             pokemonIds?: string[];
-        }[]
-    ) => {
+        }[],
+        pokemonIds?: string[]
+    ) {
         const oldTiers = tierlist.tiers || [];
         const inputTiers = oldTiers.map(({ title, id, pokemons }) => ({
             id,
@@ -282,15 +290,23 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
             tiers[tierIndex].id = id;
         }
 
-        runUpdateMutation(
-            { tiers: inputTiers },
-            {
-                tiers,
-            }
-        );
-    };
+        const update: IOptimisticResponseSpread = {
+            tiers,
+        };
 
-    const createTier = () => {
+        if (pokemonIds) {
+            update.pokemons = pokemonIds
+                .map((id) => pokemonsMap.get(id))
+                .filter((u) => u !== undefined)
+                .map((pokemon) => ({
+                    pokemon,
+                }));
+        }
+
+        runUpdateMutation({ tiers: inputTiers, pokemonIds }, update);
+    }
+
+    function createTier() {
         const updateTiers: TierUpdateInput[] = (tierlist.tiers || []).map(
             (tier) => ({
                 id: tier.id,
@@ -314,9 +330,9 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
         });
 
         runUpdateMutation({ tiers: updateTiers }, { tiers });
-    };
+    }
 
-    const deleteTier = (deleteId: string) => {
+    function deleteTier(deleteId: string) {
         const oldTiers = (tierlist.tiers || []).filter(
             ({ id }) => id != deleteId
         );
@@ -332,7 +348,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
         }));
 
         runUpdateMutation({ tiers: updateTiers }, { tiers });
-    };
+    }
 
     return {
         tierlist,
@@ -346,44 +362,3 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
         deleteTier,
     };
 }
-
-// TODO: look into @updatable directives with linked and assigneable data
-// https://relay.dev/docs/guided-tour/updating-data/imperatively-modifying-linked-fields/
-// const assignablePokemonFragment = graphql`
-//     fragment useEditableTierlist_assignablePokemon on Pokemon @assignable {
-//         __typename
-//     }
-// `;
-
-// const updatablePokemonFragment = graphql`
-//     fragment useEditableTierlist_pokemon on Pokemon {
-//         name
-//         image
-//         number
-//         id
-//     }
-// `;
-
-// const updatableTierlistQuery = graphql`
-//     query useEditableTierlistQuery($id: String!) @updatable {
-//         tierlist(where: { id: $id }) {
-//             id
-//             title
-//             published
-//             tiers {
-//                 id
-//                 title
-//                 pokemons {
-//                     id
-//                     ...useEditableTierlist_assignablePokemon
-//                 }
-//             }
-//             pokemons {
-//                 id
-//                 ...useEditableTierlist_assignablePokemon
-//             }
-//             createdAt
-//             updatedAt
-//         }
-//     }
-// `;
