@@ -20,19 +20,17 @@ export default async function Page() {
 
     return (
         <div className="w-full flex justify-center pt-16">
-            <div className="max-w-5xl">
-                <Card className="w-full">
-                    <CardHeader className="flex justify-around">
-                        <CardTitle className="text-5xl">Tierlists</CardTitle>
-                        <CardDescription>
-                            <CreateTierlistButton title="unnamed tierlist" />
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <TierlistClientPage serializedQuery={serializedQuery} />
-                    </CardContent>
-                </Card>
-            </div>
+            <Card className="w-full max-w-4xl">
+                <CardHeader className="flex justify-around">
+                    <CardTitle className="text-5xl">Tierlists</CardTitle>
+                    <CardDescription>
+                        <CreateTierlistButton title="unnamed tierlist" />
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="flex justify-center">
+                    <TierlistClientPage serializedQuery={serializedQuery} />
+                </CardContent>
+            </Card>
         </div>
     );
 }
