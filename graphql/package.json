@@ -12,6 +12,7 @@
     "generate:prisma": "prisma generate"
   },
   "prettier": {
+    "tabWidth": 2,
     "semi": false,
     "singleQuote": true,
     "trailingComma": "all"
