@@ -147,14 +147,21 @@ builder.mutationFields((t) => ({
               }
             : undefined,
           tiers: {
-            create:
-              args.data.tiers?.map((tier, index) => ({
-                title: tier.title,
-                index,
-                pokemons: {
-                  connect: tier.pokemonIds?.map((id) => ({ id })) ?? [],
-                },
-              })) ?? [],
+            create: args.data.tiers
+              ?.map((tier, index) => {
+                return {
+                  title: tier.title ?? 'New Tier',
+                  index,
+                  pokemons: {
+                    create:
+                      tier.pokemonIds?.map((pokemonId, index) => ({
+                        pokemonId,
+                        index,
+                      })) ?? undefined,
+                  },
+                }
+              })
+              .filter((u) => u !== undefined),
           },
         },
       })
