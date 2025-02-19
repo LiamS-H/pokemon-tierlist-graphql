@@ -37,8 +37,8 @@ export function TierlistClientPage({
 
     return (
         <div className="w-full flex justify-center">
-            <div className="min-w-5xl flex flex-row flex-wrap">
-                <ul>
+            <div className="min-w-5xl">
+                <ul className="flex flex-row flex-wrap gap-2">
                     {tierlists.map((tierlist) => (
                         <TierlistThumbnail
                             tierlistFrag={tierlist}
