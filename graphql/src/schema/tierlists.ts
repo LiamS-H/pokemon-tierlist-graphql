@@ -25,7 +25,7 @@ builder.prismaObject('Tierlist', {
     title: t.exposeString('title', { nullable: false }),
     pokemons: t.relation('pokemons', { query: { orderBy: { index: 'asc' } } }),
     published: t.exposeBoolean('published', { nullable: false }),
-    tiers: t.relation('tiers'),
+    tiers: t.relation('tiers', { query: { orderBy: { index: 'asc' } } }),
     createdAt: t.expose('createdAt', { type: 'DateTime' }),
     updatedAt: t.expose('updatedAt', { type: 'DateTime' }),
   }),
