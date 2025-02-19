@@ -11,7 +11,7 @@ export function PokemonThumnail({
     link,
 }: {
     pokemonFragment: pokemonThumbnail_pokemon$key;
-    size?: 1 | 2 | 3 | 4;
+    size?: 0.25 | 0.5 | 1 | 2 | 3 | 4;
     link?: true;
 }) {
     const pokemon = useFragment(
@@ -35,21 +35,25 @@ export function PokemonThumnail({
                 height: dimension,
             }}
         >
-            <Badge
-                className={`absolute px-1 ${
-                    size === 1 ? "top-1 left-1" : "top-2 left-2"
-                }`}
-            >
-                {pokemon.name}
-            </Badge>
-            <Badge
-                className={`absolute ${
-                    size === 1 ? "bottom-1 right-1" : "bottom-2 right-2"
-                }`}
-                variant="secondary"
-            >
-                {pokemon.number}
-            </Badge>
+            {size >= 1 && (
+                <>
+                    <Badge
+                        className={`absolute px-1 ${
+                            size === 1 ? "top-1 left-1" : "top-2 left-2"
+                        }`}
+                    >
+                        {pokemon.name}
+                    </Badge>
+                    <Badge
+                        className={`absolute ${
+                            size === 1 ? "bottom-1 right-1" : "bottom-2 right-2"
+                        }`}
+                        variant="secondary"
+                    >
+                        {pokemon.number}
+                    </Badge>
+                </>
+            )}
             <PokemonImage
                 dimension={dimension}
                 image={pokemon.image}

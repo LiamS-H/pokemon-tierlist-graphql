@@ -14,7 +14,7 @@ export default async function Page() {
     return (
         <div>
             <CreateTierlistButton title={"unnamed tierlist"} />
-            <TierlistClientPage serializedQuery={serializedQuery} />;
+            <TierlistClientPage serializedQuery={serializedQuery} />
         </div>
     );
 }

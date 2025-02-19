@@ -7,6 +7,7 @@ import { Edit2, Trash2 } from "lucide-react";
 import { Droppable } from "@hello-pangea/dnd";
 import { PokemonItem } from "./item";
 import { EditText } from "@/components/ui/editText";
+import { getTierColor } from "@/lib/tierColors";
 
 export function Tier({
     tierFragment,
@@ -37,21 +38,8 @@ export function Tier({
         tierFragment
     );
 
-    function getBackgroundColor() {
-        const tierColors: HTMLAttributes<HTMLDivElement>["className"][] = [
-            "bg-rose-500",
-            "bg-orange-500",
-            "bg-yellow-500",
-            "bg-green-500",
-            "bg-blue-500",
-            "bg-purple-500",
-            "bg-pink-500",
-        ];
-        return tierColors[index] || "bg-slate-100";
-    }
-
     return (
-        <div className={`rounded-lg ${getBackgroundColor()}`}>
+        <div className={`rounded-lg ${getTierColor(index)}`}>
             <div className="flex items-center justify-between p-2">
                 <EditText text={tier.title} setText={onEdit}>
                     <h3 className="">{tier.title}</h3>

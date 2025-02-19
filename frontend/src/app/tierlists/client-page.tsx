@@ -5,6 +5,7 @@ import clientPageTierlistNode, {
 } from "./__generated__/clientPageTierlistQuery.graphql";
 import { graphql, usePreloadedQuery, useRelayEnvironment } from "react-relay";
 import useSerializableQuery from "@/lib/relay/useSerializeableQuery";
+import { TierlistThumbnail } from "@/components/tierlistThumbnail";
 
 export function TierlistClientPage({
     serializedQuery,
@@ -24,12 +25,7 @@ export function TierlistClientPage({
             query clientPageTierlistQuery {
                 tierlists {
                     id
-                    title
-                    pokemons {
-                        pokemon {
-                            ...pokemonThumbnail_pokemon
-                        }
-                    }
+                    ...tierlistThumbnail_tierlist
                 }
             }
         `,
@@ -40,12 +36,17 @@ export function TierlistClientPage({
     }
 
     return (
-        <div>
-            <ul>
-                {tierlists.map((tierlist) => (
-                    <li key={tierlist.id}>{tierlist.title}</li>
-                ))}
-            </ul>
+        <div className="w-full flex justify-center">
+            <div className="min-w-5xl flex flex-row flex-wrap">
+                <ul>
+                    {tierlists.map((tierlist) => (
+                        <TierlistThumbnail
+                            tierlistFrag={tierlist}
+                            key={tierlist.id}
+                        />
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }
