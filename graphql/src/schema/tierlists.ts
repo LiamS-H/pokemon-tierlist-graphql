@@ -148,8 +148,9 @@ builder.mutationFields((t) => ({
             : undefined,
           tiers: {
             create:
-              args.data.tiers?.map((tier) => ({
+              args.data.tiers?.map((tier, index) => ({
                 title: tier.title,
+                index,
                 pokemons: {
                   connect: tier.pokemonIds?.map((id) => ({ id })) ?? [],
                 },
@@ -182,12 +183,11 @@ builder.mutationFields((t) => ({
           ?.map((tier) => tier.id)
           .filter((id) => !updatedTierIds?.includes(id)) ?? []
 
-      console.log(deletedTierIds)
-
       return prisma.tierlist.update({
         ...query,
         where: { id: args.id },
         data: {
+          updatedAt: new Date().toISOString(),
           published: args.data.published ?? undefined,
           title: args.data.title ?? undefined,
           pokemons: args.data.pokemonIds
@@ -203,14 +203,14 @@ builder.mutationFields((t) => ({
           tiers: args.data.tiers
             ? {
                 update: args.data.tiers
-                  .map((tier) => {
+                  .map((tier, index) => {
                     if (!tier.id) return
 
                     return {
                       where: { id: tier.id },
                       data: {
                         title: tier.title ?? undefined,
-
+                        index,
                         pokemons: tier.pokemonIds
                           ? {
                               deleteMany: {},
@@ -228,17 +228,21 @@ builder.mutationFields((t) => ({
                   .filter((u) => u !== undefined),
 
                 create: args.data.tiers
-                  .filter((t) => !t.id)
-                  .map((tier) => ({
-                    title: tier.title ?? 'New Tier',
-                    pokemons: {
-                      create:
-                        tier.pokemonIds?.map((pokemonId, index) => ({
-                          pokemonId,
-                          index,
-                        })) ?? undefined,
-                    },
-                  })),
+                  .map((tier, index) => {
+                    if (tier.id) return
+                    return {
+                      title: tier.title ?? 'New Tier',
+                      index,
+                      pokemons: {
+                        create:
+                          tier.pokemonIds?.map((pokemonId, index) => ({
+                            pokemonId,
+                            index,
+                          })) ?? undefined,
+                      },
+                    }
+                  })
+                  .filter((u) => u !== undefined),
 
                 deleteMany:
                   old?.tiers && args.data.tiers
