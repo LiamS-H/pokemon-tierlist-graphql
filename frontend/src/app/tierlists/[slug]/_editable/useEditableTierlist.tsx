@@ -329,7 +329,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
             pokemonIds: [],
         });
         tiers.push({
-            id: "<server-id>",
+            id: `<placedholderid-${tiers.length}>`,
             title: "New Tier",
             pokemons: [],
         });
