@@ -6,15 +6,18 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useRelayEnvironment } from "react-relay";
 import { storageCreateTierlist } from "@/lib/localStorage";
+import type { ReactNode } from "react";
 
 export function CreateTierlistButton({
     title,
     pokemonIds = [],
     tiers = [],
+    children,
 }: {
     title: string;
     pokemonIds?: string[];
     tiers?: TierCreateInput[];
+    children?: ReactNode;
 }) {
     const { push } = useRouter();
     const environment = useRelayEnvironment();
@@ -40,8 +43,14 @@ export function CreateTierlistButton({
 
     return (
         <Button onClick={handleCreate}>
-            <Plus />
-            Tierlist
+            {children ? (
+                children
+            ) : (
+                <>
+                    <Plus />
+                    Tierlist
+                </>
+            )}
         </Button>
     );
 }
