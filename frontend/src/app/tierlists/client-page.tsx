@@ -26,7 +26,9 @@ export function TierlistClientPage({
                     id
                     title
                     pokemons {
-                        ...pokemonThumbnail_pokemon
+                        pokemon {
+                            ...pokemonThumbnail_pokemon
+                        }
                     }
                 }
             }

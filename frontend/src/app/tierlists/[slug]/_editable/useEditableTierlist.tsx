@@ -5,6 +5,7 @@ import {
     useEditableTierlist_tierlist$data,
 } from "./__generated__/useEditableTierlist_tierlist.graphql";
 import {
+    TierUpdateInput,
     useEditableTierlistUpdateMutation,
     useEditableTierlistUpdateMutation$variables,
 } from "./__generated__/useEditableTierlistUpdateMutation.graphql";
@@ -19,19 +20,23 @@ const tierlistFragment = graphql`
             id
             title
             pokemons {
-                id
-                number
-                image
-                name
+                pokemon {
+                    id
+                    number
+                    image
+                    name
+                }
             }
             ...tier_tier
         }
         pokemons {
-            id
-            number
-            image
-            name
-            ...pokemonThumbnail_pokemon
+            pokemon {
+                id
+                number
+                image
+                name
+                ...pokemonThumbnail_pokemon
+            }
         }
         createdAt
         updatedAt
@@ -49,11 +54,26 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
         name: string;
         image: string;
     }) => void;
-    setTier: (id: string, title?: string, pokemonIds?: string[]) => void;
+    setPokemon: (ids: string[]) => void;
+    setTiers: (
+        tiers: { id: string; title?: string; pokemonIds?: string[] }[]
+    ) => void;
     createTier: () => void;
     deleteTier: (id: string) => void;
 } {
     const tierlist = useFragment(tierlistFragment, key);
+    const pokemonsMap = new Map<
+        string,
+        {
+            id: string;
+            number: string;
+            name: string;
+            image: string;
+        }
+    >();
+    tierlist.pokemons?.forEach(({ pokemon: { id, number, name, image } }) => {
+        pokemonsMap.set(id, { id, number, name, image });
+    });
 
     const [updateTierlist] = useMutation<useEditableTierlistUpdateMutation>(
         graphql`
@@ -88,20 +108,24 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                 title: string;
                 pokemons:
                     | readonly {
-                          id: string;
-                          name: string;
-                          number: string;
-                          image: string;
+                          readonly pokemon: {
+                              id: string;
+                              name: string;
+                              number: string;
+                              image: string;
+                          };
                       }[]
                     | null
                     | undefined;
             }[];
             pokemons:
                 | readonly {
-                      id: string;
-                      name: string;
-                      number: string;
-                      image: string;
+                      readonly pokemon: {
+                          id: string;
+                          name: string;
+                          number: string;
+                          image: string;
+                      };
                   }[]
                 | null
                 | undefined;
@@ -114,20 +138,24 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                     id: tier.id,
                     title: tier.title,
                     pokemons: tier.pokemons?.map(
-                        ({ id, name, number, image }) => ({
-                            id,
-                            name,
-                            number,
-                            image,
+                        ({ pokemon: { id, name, number, image } }) => ({
+                            pokemon: {
+                                id,
+                                name,
+                                number,
+                                image,
+                            },
                         })
                     ),
                 })),
                 pokemons: (tierlist.pokemons || []).map(
-                    ({ id, name, number, image }) => ({
-                        id,
-                        name,
-                        number,
-                        image,
+                    ({ pokemon: { id, name, number, image } }) => ({
+                        pokemon: {
+                            id,
+                            name,
+                            number,
+                            image,
+                        },
                     })
                 ),
                 ...optimisticResponseSpread,
@@ -180,25 +208,52 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
         image: string;
         number: string;
     }) => {
-        const new_pokemons = [...(tierlist.pokemons || []), pokemon];
+        const new_pokemons = [...(tierlist.pokemons || []), { pokemon }];
         const input = {
-            pokemonIds: new_pokemons?.map(({ id }) => id),
+            pokemonIds: new_pokemons?.map(({ pokemon }) => pokemon.id),
         };
         runUpdateMutation(input, {
-            pokemons: new_pokemons.map(({ id, name, number, image }) => ({
-                id,
-                name,
-                number,
-                image,
-            })),
+            pokemons: new_pokemons.map(
+                ({ pokemon: { id, name, number, image } }) => ({
+                    pokemon: {
+                        id,
+                        name,
+                        number,
+                        image,
+                    },
+                })
+            ),
         });
     };
 
-    const setTier = (id: string, title?: string, pokemonIds?: string[]) => {
+    const setPokemon = (ids: string[]) => {
+        const input = {
+            pokemonIds: ids,
+        };
+        runUpdateMutation(input, {
+            pokemons: ids
+                .map((id) => pokemonsMap.get(id))
+                .filter((u) => u !== undefined)
+                .map((pokemon) => ({
+                    pokemon,
+                })),
+        });
+    };
+
+    const setTiers = (
+        updatedTiers: {
+            id: string;
+            title?: string;
+            pokemonIds?: string[];
+        }[]
+    ) => {
         const oldTiers = tierlist.tiers || [];
-        const inputTiers = oldTiers.map(({ title, pokemons }) => ({
+        const inputTiers = oldTiers.map(({ title, id, pokemons }) => ({
+            id,
             title,
-            pokemonIds: pokemons ? pokemons.map(({ id }) => id) : [],
+            pokemonIds: pokemons
+                ? pokemons.map(({ pokemon: { id } }) => id)
+                : [],
         }));
         const tiers = oldTiers.map(({ id, title, pokemons }) => ({
             id,
@@ -206,25 +261,26 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
             pokemons,
         }));
 
-        const tierIndex = oldTiers.findIndex((tier) => tier.id === id);
-        if (tierIndex === -1) return;
+        for (const { id, title, pokemonIds } of updatedTiers) {
+            const tierIndex = oldTiers.findIndex((tier) => tier.id === id);
+            if (tierIndex === -1) continue;
 
-        const updatedTierInput = {
-            title: title || inputTiers[tierIndex].title,
-            pokemonIds: pokemonIds || inputTiers[tierIndex].pokemonIds,
-        };
-        inputTiers[tierIndex] = updatedTierInput;
-        tiers[tierIndex].pokemons = inputTiers[tierIndex].pokemonIds
-            .map((pokemonId) => {
-                const pokemon = tierlist.pokemons?.find(
-                    ({ id }) => id === pokemonId
-                );
-                if (!pokemon) return pokemon;
-                const { id, image, name, number } = pokemon;
-                return { id, image, name, number };
-            })
-            .filter((p) => p !== undefined);
-        tiers[tierIndex].id = id;
+            const updatedTierInput = {
+                id,
+                title: title || inputTiers[tierIndex].title,
+                pokemonIds: pokemonIds || inputTiers[tierIndex].pokemonIds,
+            };
+            inputTiers[tierIndex] = updatedTierInput;
+
+            tiers[tierIndex].pokemons = inputTiers[tierIndex].pokemonIds
+                .map((pokemonId) => {
+                    const pokemon = pokemonsMap.get(pokemonId);
+                    if (!pokemon) return;
+                    return { pokemon: pokemon };
+                })
+                .filter((p) => p !== undefined);
+            tiers[tierIndex].id = id;
+        }
 
         runUpdateMutation(
             { tiers: inputTiers },
@@ -235,10 +291,13 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
     };
 
     const createTier = () => {
-        const updateTiers = (tierlist.tiers || []).map((tier) => ({
-            title: tier.title,
-            pokemonIds: tier.pokemons?.map((pokemon) => pokemon.id),
-        }));
+        const updateTiers: TierUpdateInput[] = (tierlist.tiers || []).map(
+            (tier) => ({
+                id: tier.id,
+                title: tier.title,
+                pokemonIds: tier.pokemons?.map(({ pokemon }) => pokemon.id),
+            })
+        );
         const tiers = (tierlist.tiers || []).map(({ id, title, pokemons }) => ({
             id,
             title,
@@ -249,7 +308,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
             pokemonIds: [],
         });
         tiers.push({
-            id: "test",
+            id: "<server-id>",
             title: "New Tier",
             pokemons: [],
         });
@@ -261,14 +320,15 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
         const oldTiers = (tierlist.tiers || []).filter(
             ({ id }) => id != deleteId
         );
-        const updateTiers = oldTiers.map((tier) => ({
-            title: tier.title,
-            pokemonIds: tier.pokemons?.map((pokemon) => pokemon.id),
-        }));
         const tiers = oldTiers.map(({ id, title, pokemons }) => ({
             id,
             title,
             pokemons,
+        }));
+        const updateTiers = oldTiers.map(({ id, title, pokemons }) => ({
+            id,
+            title,
+            pokemonIds: pokemons?.map(({ pokemon }) => pokemon.id),
         }));
 
         runUpdateMutation({ tiers: updateTiers }, { tiers });
@@ -280,7 +340,8 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
         publishTierlist,
         deleteTierlist,
         addPokemon,
-        setTier,
+        setPokemon,
+        setTiers,
         createTier,
         deleteTier,
     };

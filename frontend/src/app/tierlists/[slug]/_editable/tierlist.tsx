@@ -19,9 +19,10 @@ export function Editable({
         setTitle,
         publishTierlist,
         addPokemon,
+        setPokemon,
         deleteTierlist,
         createTier,
-        setTier,
+        setTiers,
         deleteTier,
     } = useEditableTierlist(fragment);
 
@@ -33,6 +34,7 @@ export function Editable({
 
     const onDragEnd = (result: DropResult) => {
         setIsDragging(false);
+        console.log("onDragEnd");
 
         const { destination, source, draggableId } = result;
 
@@ -59,68 +61,77 @@ export function Editable({
 
         const pokemonId = draggableId;
 
+        if (sourceId === destinationId && sourceId === "tray") {
+            const pokemonIds = tierlist.pokemons?.map(
+                ({ pokemon }) => pokemon.id
+            );
+            if (!pokemonIds) return;
+            pokemonIds?.splice(source.index, 1);
+            pokemonIds?.splice(destination.index, 0, pokemonId);
+
+            setPokemon(pokemonIds);
+            return;
+        }
         if (sourceId === destinationId && sourceId !== "tray") {
             const tier = (tierlist.tiers ?? []).find((t) => t.id === sourceId);
             if (!tier || !tier.pokemons) return;
 
-            const pokemonIds = [...tier.pokemons.map((p) => p.id)];
+            const pokemonIds = [
+                ...tier.pokemons.map(({ pokemon }) => pokemon.id),
+            ];
             pokemonIds.splice(source.index, 1);
             pokemonIds.splice(destination.index, 0, pokemonId);
 
-            setTier(sourceId, undefined, pokemonIds);
-        } else if (sourceId === "tray" && destinationId !== "tray") {
+            setTiers([{ id: sourceId, pokemonIds }]);
+            return;
+        }
+        if (sourceId === "tray" && destinationId !== "tray") {
             const tier = (tierlist.tiers ?? []).find(
                 (t) => t.id === destinationId
             );
             if (!tier) return;
 
             const currentIds = tier.pokemons
-                ? tier.pokemons.map((p) => p.id)
+                ? tier.pokemons.map(({ pokemon }) => pokemon.id)
                 : [];
 
             const newIds = [...currentIds];
             newIds.splice(destination.index, 0, pokemonId);
 
-            setTier(destinationId, undefined, newIds);
-
-            // const unusedPokemons = getUnusedPokemons();
-            // if (unusedPokemons.some((p) => p.id === pokemonId)) {
-            //     const newPokemonList = unusedPokemons
-            //         .filter((p) => p.id !== pokemonId)
-            //         .map((p) => p.id);
-            //     setPokemon(newPokemonList);
-            // }
-        } else if (sourceId !== "tray" && destinationId === "tray") {
+            setTiers([{ id: destinationId, pokemonIds: newIds }]);
+            return;
+        }
+        if (sourceId !== "tray" && destinationId === "tray") {
             const sourceTier = (tierlist.tiers ?? []).find(
                 (t) => t.id === sourceId
             );
             if (!sourceTier || !sourceTier.pokemons) return;
 
             const newSourceIds = sourceTier.pokemons
-                .map((p) => p.id)
+                .map(({ pokemon }) => pokemon.id)
                 .filter((id) => id !== pokemonId);
 
-            setTier(sourceId, undefined, newSourceIds);
+            setTiers([{ id: sourceId, pokemonIds: newSourceIds }]);
 
-            // const unusedPokemons = getUnusedPokemons();
-            // if (!unusedPokemons.some((p) => p.id === pokemonId)) {
-            //     const newPokemonList = [
-            //         ...unusedPokemons.map((p) => p.id),
-            //         pokemonId,
-            //     ];
-            //     setPokemon(newPokemonList);
-            // }
-        } else if (sourceId !== "tray" && destinationId !== "tray") {
+            const pokemonIds = tierlist.pokemons?.map(
+                ({ pokemon }) => pokemon.id
+            );
+            if (!pokemonIds) return;
+            pokemonIds?.splice(pokemonIds.indexOf(pokemonId), 1);
+            pokemonIds?.splice(destination.index, 0, pokemonId);
+
+            setPokemon(pokemonIds);
+            return;
+        }
+        if (sourceId !== "tray" && destinationId !== "tray") {
             const sourceTier = (tierlist.tiers ?? []).find(
                 (t) => t.id === sourceId
             );
             if (!sourceTier || !sourceTier.pokemons) return;
 
             const newSourceIds = sourceTier.pokemons
-                .map((p) => p.id)
+                .map(({ pokemon }) => pokemon.id)
                 .filter((id) => id !== pokemonId);
-
-            setTier(sourceId, undefined, newSourceIds);
 
             const destTier = (tierlist.tiers ?? []).find(
                 (t) => t.id === destinationId
@@ -128,12 +139,16 @@ export function Editable({
             if (!destTier) return;
 
             const currentDestIds = destTier.pokemons
-                ? destTier.pokemons.map((p) => p.id)
+                ? destTier.pokemons.map(({ pokemon }) => pokemon.id)
                 : [];
             const newDestIds = [...currentDestIds];
             newDestIds.splice(destination.index, 0, pokemonId);
 
-            setTier(destinationId, undefined, newDestIds);
+            setTiers([
+                { id: sourceId, pokemonIds: newSourceIds },
+                { id: destinationId, pokemonIds: newDestIds },
+            ]);
+            return;
         }
     };
 
@@ -142,12 +157,14 @@ export function Editable({
 
         const usedIds = new Set();
         tierlist.tiers?.forEach((tier) => {
-            tier.pokemons?.forEach((pokemon) => {
+            tier.pokemons?.forEach(({ pokemon }) => {
                 usedIds.add(pokemon.id);
             });
         });
 
-        return tierlist.pokemons.filter((pokemon) => !usedIds.has(pokemon.id));
+        return tierlist.pokemons.filter(
+            ({ pokemon }) => !usedIds.has(pokemon.id)
+        );
     };
 
     return (
@@ -186,7 +203,7 @@ export function Editable({
                             key={tier.id}
                             index={index}
                             tierFragment={tier}
-                            onEdit={(id, title) => setTier(id, title)}
+                            onEdit={(id, title) => setTiers([{ id, title }])}
                             onDelete={deleteTier}
                             isDragDisabled={isDragging}
                         />
@@ -218,15 +235,17 @@ export function Editable({
                                         : "border-slate-200"
                                 }`}
                             >
-                                {getUnusedPokemons().map((pokemon, index) => (
-                                    <PokemonItem
-                                        key={pokemon.id}
-                                        id={pokemon.id}
-                                        pokemon={pokemon}
-                                        index={index}
-                                        isDragDisabled={isDragging}
-                                    />
-                                ))}
+                                {getUnusedPokemons().map(
+                                    ({ pokemon }, index) => (
+                                        <PokemonItem
+                                            key={pokemon.id}
+                                            id={pokemon.id}
+                                            pokemon={pokemon}
+                                            index={index}
+                                            isDragDisabled={isDragging}
+                                        />
+                                    )
+                                )}
                                 {provided.placeholder}
                             </div>
                         )}
@@ -236,7 +255,10 @@ export function Editable({
             <div>
                 <PokemonPool
                     addPokemon={addPokemon}
-                    usedPokemon={tierlist.pokemons?.map(({ id }) => id) || []}
+                    usedPokemon={
+                        tierlist.pokemons?.map(({ pokemon }) => pokemon.id) ||
+                        []
+                    }
                 />
             </div>
         </div>

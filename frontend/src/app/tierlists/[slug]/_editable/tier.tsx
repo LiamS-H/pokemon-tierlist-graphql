@@ -27,8 +27,10 @@ export function Tier({
                 id
                 title
                 pokemons {
-                    id
-                    ...pokemonThumbnail_pokemon
+                    pokemon {
+                        id
+                        ...pokemonThumbnail_pokemon
+                    }
                 }
             }
         `,
@@ -103,7 +105,7 @@ export function Tier({
                             snapshot.isDraggingOver ? "bg-slate-200/50" : ""
                         }`}
                     >
-                        {tier.pokemons?.map((pokemon, index) => (
+                        {tier.pokemons?.map(({ pokemon }, index) => (
                             <PokemonItem
                                 key={pokemon.id}
                                 id={pokemon.id}

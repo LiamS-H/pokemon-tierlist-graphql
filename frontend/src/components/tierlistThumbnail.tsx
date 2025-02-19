@@ -5,16 +5,20 @@ const query = graphql`
         id
         title
         pokemons {
-            id
-            name
-            image
+            pokemon {
+                id
+                name
+                image
+            }
         }
         tiers {
             id
             title
             pokemons {
-                id
-                name
+                pokemon {
+                    id
+                    name
+                }
             }
         }
     }
