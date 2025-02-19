@@ -8,12 +8,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import BackButton from "@/components/ui/backButton";
 import { PokemonThumnail } from "@/components/pokemonThumbnail";
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
-import Link from "next/link";
 import { pokemonModal_pokemon$key } from "./__generated__/pokemonModal_pokemon.graphql";
 
 export function PokemonModal({

@@ -1,5 +1,5 @@
 "use client";
-import { graphql, commitMutation, useRelayEnvironment } from "react-relay";
+import { graphql, commitMutation } from "react-relay";
 import {
     TierCreateInput,
     TierlistCreateInput,

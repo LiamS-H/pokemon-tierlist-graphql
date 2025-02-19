@@ -10,19 +10,18 @@ export default function Page() {
     const { slug } = useParams();
     if (!slug) notFound();
 
-    const [queryRefference, loadQuery, disposeQuery] =
-        useQueryLoader<pageTierlistQuery>(
-            graphql`
-                query pageTierlistQuery($id: String!) {
-                    tierlist(where: { id: $id }) {
-                        id
-                        published
-                        ...tierlistViewOnly
-                        ...useEditableTierlist_tierlist
-                    }
+    const [queryRefference, loadQuery] = useQueryLoader<pageTierlistQuery>(
+        graphql`
+            query pageTierlistQuery($id: String!) {
+                tierlist(where: { id: $id }) {
+                    id
+                    published
+                    ...tierlistViewOnly
+                    ...useEditableTierlist_tierlist
                 }
-            `
-        );
+            }
+        `
+    );
 
     if (queryRefference === null) {
         loadQuery({ id: slug.toString() });

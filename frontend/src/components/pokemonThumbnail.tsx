@@ -2,7 +2,6 @@ import { graphql, useFragment } from "react-relay";
 import { Card } from "./ui/card";
 import { pokemonThumbnail_pokemon$key } from "./__generated__/pokemonThumbnail_pokemon.graphql";
 import { Badge } from "./ui/badge";
-import Link from "next/link";
 import { PokemonImage } from "./pokemonImage";
 
 export function PokemonThumnail({
