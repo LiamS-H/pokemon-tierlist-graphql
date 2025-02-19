@@ -176,7 +176,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                 id: tierlist.id,
             },
             optimisticResponse,
-            optimisticUpdater: (store) => {},
+            // optimisticUpdater: (store) => {},
         });
     };
 
@@ -269,14 +269,18 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
             pokemons,
         }));
 
-        for (const { id, title, pokemonIds } of updatedTiers) {
+        for (const tier of updatedTiers) {
+            const id = tier.id;
             const tierIndex = oldTiers.findIndex((tier) => tier.id === id);
+            const title = tier.title || inputTiers[tierIndex].title;
             if (tierIndex === -1) continue;
+            const pokemonIds =
+                tier.pokemonIds || inputTiers[tierIndex].pokemonIds;
 
             const updatedTierInput = {
                 id,
-                title: title || inputTiers[tierIndex].title,
-                pokemonIds: pokemonIds || inputTiers[tierIndex].pokemonIds,
+                title,
+                pokemonIds,
             };
             inputTiers[tierIndex] = updatedTierInput;
 
@@ -288,6 +292,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                 })
                 .filter((p) => p !== undefined);
             tiers[tierIndex].id = id;
+            tiers[tierIndex].title = title;
         }
 
         const update: IOptimisticResponseSpread = {
