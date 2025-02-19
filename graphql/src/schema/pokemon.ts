@@ -59,41 +59,41 @@ export const PokemonUniqueInput = builder.inputType('PokemonUniqueInput', {
   }),
 })
 
-const AttackCreateInput = builder.inputType('AttackCreateInput', {
-  fields: (t) => ({
-    name: t.string({ required: true }),
-    type: t.string({ required: true }),
-    damage: t.int(),
-  }),
-})
+// const AttackCreateInput = builder.inputType('AttackCreateInput', {
+//   fields: (t) => ({
+//     name: t.string({ required: true }),
+//     type: t.string({ required: true }),
+//     damage: t.int(),
+//   }),
+// })
 
-const PokemonAttackCreateInput = builder.inputType('PokemonAttackCreateInput', {
-  fields: (t) => ({
-    fast: t.field({ type: [AttackCreateInput] }),
-    special: t.field({ type: [AttackCreateInput] }),
-  }),
-})
+// const PokemonAttackCreateInput = builder.inputType('PokemonAttackCreateInput', {
+//   fields: (t) => ({
+//     fast: t.field({ type: [AttackCreateInput] }),
+//     special: t.field({ type: [AttackCreateInput] }),
+//   }),
+// })
 
-const PokemonCreateInput = builder.inputType('PokemonCreateInput', {
-  fields: (t) => ({
-    number: t.string({ required: true }),
-    name: t.string({ required: true }),
-    weightMin: t.string(),
-    weightMax: t.string(),
-    heightMin: t.string(),
-    heightMax: t.string(),
-    classification: t.string(),
-    types: t.stringList(),
-    resistant: t.stringList(),
-    weaknesses: t.stringList(),
-    fleeRate: t.float(),
-    maxCP: t.int(),
-    maxHP: t.int(),
-    evolutionAmount: t.int(),
-    evolutionName: t.string(),
-    attacks: t.field({ type: PokemonAttackCreateInput }),
-  }),
-})
+// const PokemonCreateInput = builder.inputType('PokemonCreateInput', {
+//   fields: (t) => ({
+//     number: t.string({ required: true }),
+//     name: t.string({ required: true }),
+//     weightMin: t.string(),
+//     weightMax: t.string(),
+//     heightMin: t.string(),
+//     heightMax: t.string(),
+//     classification: t.string(),
+//     types: t.stringList(),
+//     resistant: t.stringList(),
+//     weaknesses: t.stringList(),
+//     fleeRate: t.float(),
+//     maxCP: t.int(),
+//     maxHP: t.int(),
+//     evolutionAmount: t.int(),
+//     evolutionName: t.string(),
+//     attacks: t.field({ type: PokemonAttackCreateInput }),
+//   }),
+// })
 
 builder.queryFields((t) => ({
   allPokemons: t.prismaField({
@@ -117,59 +117,59 @@ builder.queryFields((t) => ({
   }),
 }))
 
-builder.mutationFields((t) => ({
-  createPokemon: t.prismaField({
-    type: 'Pokemon',
-    args: {
-      data: t.arg({
-        type: PokemonCreateInput,
-        required: true,
-      }),
-    },
-    resolve: async (query, parent, args) => {
-      return prisma.pokemon.create({
-        ...query,
-        data: {
-          name: args.data.name,
-          number: args.data.number,
-          weightMin: args.data.weightMin,
-          weightMax: args.data.weightMax,
-          heightMin: args.data.heightMin,
-          heightMax: args.data.heightMax,
-          classification: args.data.classification,
-          types: JSON.stringify(args.data.types ?? []),
-          resistant: JSON.stringify(args.data.resistant ?? []),
-          weaknesses: JSON.stringify(args.data.weaknesses ?? []),
-          fleeRate: args.data.fleeRate,
-          maxCP: args.data.maxCP,
-          maxHP: args.data.maxHP,
-          evolutionAmount: args.data.evolutionAmount,
-          evolutionName: args.data.evolutionName,
-          image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${Number(
-            args.data.number,
-          ).toString()}.png`,
-          attacks: args.data.attacks
-            ? {
-                create: {
-                  fast: {
-                    create: args.data.attacks.fast?.map((attack) => ({
-                      name: attack.name,
-                      type: attack.type,
-                      damage: attack.damage,
-                    })),
-                  },
-                  special: {
-                    create: args.data.attacks.special?.map((attack) => ({
-                      name: attack.name,
-                      type: attack.type,
-                      damage: attack.damage,
-                    })),
-                  },
-                },
-              }
-            : undefined,
-        },
-      })
-    },
-  }),
-}))
+// builder.mutationFields((t) => ({
+//   createPokemon: t.prismaField({
+//     type: 'Pokemon',
+//     args: {
+//       data: t.arg({
+//         type: PokemonCreateInput,
+//         required: true,
+//       }),
+//     },
+//     resolve: async (query, parent, args) => {
+//       return prisma.pokemon.create({
+//         ...query,
+//         data: {
+//           name: args.data.name,
+//           number: args.data.number,
+//           weightMin: args.data.weightMin,
+//           weightMax: args.data.weightMax,
+//           heightMin: args.data.heightMin,
+//           heightMax: args.data.heightMax,
+//           classification: args.data.classification,
+//           types: JSON.stringify(args.data.types ?? []),
+//           resistant: JSON.stringify(args.data.resistant ?? []),
+//           weaknesses: JSON.stringify(args.data.weaknesses ?? []),
+//           fleeRate: args.data.fleeRate,
+//           maxCP: args.data.maxCP,
+//           maxHP: args.data.maxHP,
+//           evolutionAmount: args.data.evolutionAmount,
+//           evolutionName: args.data.evolutionName,
+//           image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${Number(
+//             args.data.number,
+//           ).toString()}.png`,
+//           attacks: args.data.attacks
+//             ? {
+//                 create: {
+//                   fast: {
+//                     create: args.data.attacks.fast?.map((attack) => ({
+//                       name: attack.name,
+//                       type: attack.type,
+//                       damage: attack.damage,
+//                     })),
+//                   },
+//                   special: {
+//                     create: args.data.attacks.special?.map((attack) => ({
+//                       name: attack.name,
+//                       type: attack.type,
+//                       damage: attack.damage,
+//                     })),
+//                   },
+//                 },
+//               }
+//             : undefined,
+//         },
+//       })
+//     },
+//   }),
+// }))
