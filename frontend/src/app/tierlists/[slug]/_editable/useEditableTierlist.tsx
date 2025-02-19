@@ -1,3 +1,4 @@
+"use client";
 // TODO: look into @updatable directives with linked and assigneable data
 // https://relay.dev/docs/guided-tour/updating-data/imperatively-modifying-linked-fields/
 
@@ -13,6 +14,10 @@ import {
     useEditableTierlistUpdateMutation$variables,
 } from "./__generated__/useEditableTierlistUpdateMutation.graphql";
 import { useEditableTierlistDeleteMutation } from "./__generated__/useEditableTierlistDeleteMutation.graphql";
+import {
+    storageDeleteTierlist,
+    storagePublishTierlist,
+} from "@/lib/localStorage";
 
 type IOptimisticResponseSpread = Partial<{
     title: string;
@@ -190,6 +195,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
     }
 
     function publishTierlist() {
+        storagePublishTierlist(tierlist.id);
         runUpdateMutation(
             {
                 published: true,
@@ -201,7 +207,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
     }
 
     function deleteTierlist() {
-        if (!tierlist.id) return;
+        storageDeleteTierlist(tierlist.id);
         deleteTierlistMutation({
             variables: {
                 id: tierlist.id,

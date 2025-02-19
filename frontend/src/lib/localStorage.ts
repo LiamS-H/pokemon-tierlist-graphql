@@ -1,12 +1,18 @@
-interface ILocalTierlists {
+export interface ILocalTierlists {
     published: string[];
-    unPublished: string[];
+    unpublished: string[];
 }
 
 export function storageGetTierlists(): ILocalTierlists {
+    try {
+        localStorage;
+    } catch {
+        return { published: [], unpublished: [] };
+    }
     const store = localStorage.getItem("tierlists");
     function reset() {
-        const emptyLocalTierlists = { published: [], unPublished: [] };
+        console.log("resseting tierlists");
+        const emptyLocalTierlists = { published: [], unpublished: [] };
         localStorage.setItem("tierlists", JSON.stringify(emptyLocalTierlists));
         return emptyLocalTierlists;
     }
@@ -19,7 +25,7 @@ export function storageGetTierlists(): ILocalTierlists {
         if (!localTierlists.published.every((s) => s === s.toString())) {
             return reset();
         }
-        if (!Array.isArray(localTierlists.unPublished)) return reset();
+        if (!Array.isArray(localTierlists.unpublished)) return reset();
         if (!localTierlists.published.every((s) => s === s.toString())) {
             return reset();
         }
@@ -35,20 +41,20 @@ function setLocalTierlists(tierlists: ILocalTierlists) {
 
 export function storageCreateTierlist(id: string) {
     const tierlists = storageGetTierlists();
-    if (tierlists.unPublished.includes(id)) return;
-    tierlists.unPublished.push(id);
+    if (tierlists.unpublished.includes(id)) return;
+    tierlists.unpublished.push(id);
     setLocalTierlists(tierlists);
 }
 export function storagePublishTierlist(id: string) {
     const tierlists = storageGetTierlists();
     if (tierlists.published.includes(id)) return;
-    tierlists.unPublished = tierlists.unPublished.filter((v) => v !== id);
+    tierlists.unpublished = tierlists.unpublished.filter((v) => v !== id);
     tierlists.published.push(id);
     setLocalTierlists(tierlists);
 }
 export function storageDeleteTierlist(id: string) {
     const tierlists = { ...storageGetTierlists() };
-    tierlists.unPublished = tierlists.unPublished.filter((v) => v !== id);
+    tierlists.unpublished = tierlists.unpublished.filter((v) => v !== id);
     tierlists.published = tierlists.published.filter((v) => v !== id);
     setLocalTierlists(tierlists);
 }
