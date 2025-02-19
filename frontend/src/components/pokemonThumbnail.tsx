@@ -36,7 +36,7 @@ export function PokemonThumnail({
             }}
         >
             <Badge
-                className={`absolute ${
+                className={`absolute px-1 ${
                     size === 1 ? "top-1 left-1" : "top-2 left-2"
                 }`}
             >
