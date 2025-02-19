@@ -10,6 +10,7 @@ import { PokemonItem } from "./item";
 import { PokemonPool } from "./pokemonPool";
 import { TimeAgo } from "@/components/ui/timeAgo";
 import { EditText } from "@/components/ui/editText";
+import { PokemonTray } from "./tray";
 
 export function Editable({
     fragment,
@@ -33,6 +34,21 @@ export function Editable({
     const onDragStart = () => {
         setIsDragging(true);
     };
+    function getUnusedPokemons() {
+        if (!tierlist.pokemons) return [];
+
+        const usedIds = new Set();
+        tierlist.tiers?.forEach((tier) => {
+            tier.pokemons?.forEach(({ pokemon }) => {
+                usedIds.add(pokemon.id);
+            });
+        });
+
+        return tierlist.pokemons.filter(
+            ({ pokemon }) => !usedIds.has(pokemon.id)
+        );
+    }
+    const unusedPokemons = getUnusedPokemons();
 
     const onDragEnd = (result: DropResult) => {
         setIsDragging(false);
@@ -49,7 +65,6 @@ export function Editable({
         ) {
             return;
         }
-
         const sourceId =
             source.droppableId === "tray"
                 ? "tray"
@@ -63,12 +78,14 @@ export function Editable({
         const pokemonId = draggableId;
 
         if (sourceId === destinationId && sourceId === "tray") {
-            const pokemonIds = tierlist.pokemons?.map(
-                ({ pokemon }) => pokemon.id
-            );
+            const pokemonIds = unusedPokemons.map(({ pokemon }) => pokemon.id);
             if (!pokemonIds) return;
             pokemonIds?.splice(source.index, 1);
             pokemonIds?.splice(destination.index, 0, pokemonId);
+
+            tierlist.pokemons?.forEach(({ pokemon: { id } }) => {
+                if (!pokemonIds.includes(id)) pokemonIds.push(id);
+            });
 
             setPokemon(pokemonIds);
             return;
@@ -77,9 +94,7 @@ export function Editable({
             const tier = (tierlist.tiers ?? []).find((t) => t.id === sourceId);
             if (!tier || !tier.pokemons) return;
 
-            const pokemonIds = [
-                ...tier.pokemons.map(({ pokemon }) => pokemon.id),
-            ];
+            const pokemonIds = tier.pokemons.map(({ pokemon }) => pokemon.id);
             pokemonIds.splice(source.index, 1);
             pokemonIds.splice(destination.index, 0, pokemonId);
 
@@ -112,12 +127,13 @@ export function Editable({
                 .map(({ pokemon }) => pokemon.id)
                 .filter((id) => id !== pokemonId);
 
-            const pokemonIds = tierlist.pokemons?.map(
-                ({ pokemon }) => pokemon.id
-            );
-            if (!pokemonIds) return;
-            pokemonIds?.splice(pokemonIds.indexOf(pokemonId), 1);
-            pokemonIds?.splice(destination.index, 0, pokemonId);
+            const pokemonIds = unusedPokemons.map(({ pokemon }) => pokemon.id);
+            pokemonIds.splice(source.index, 1);
+            pokemonIds.splice(destination.index, 0, pokemonId);
+
+            tierlist.pokemons?.forEach(({ pokemon: { id } }) => {
+                if (!pokemonIds.includes(id)) pokemonIds.push(id);
+            });
 
             setTiers([{ id: sourceId, pokemonIds: newSourceIds }], pokemonIds);
             return;
@@ -149,21 +165,6 @@ export function Editable({
             ]);
             return;
         }
-    };
-
-    const getUnusedPokemons = () => {
-        if (!tierlist.pokemons) return [];
-
-        const usedIds = new Set();
-        tierlist.tiers?.forEach((tier) => {
-            tier.pokemons?.forEach(({ pokemon }) => {
-                usedIds.add(pokemon.id);
-            });
-        });
-
-        return tierlist.pokemons.filter(
-            ({ pokemon }) => !usedIds.has(pokemon.id)
-        );
     };
 
     return (
@@ -234,34 +235,10 @@ export function Editable({
                     </div>
 
                     {/* Pokemon Tray */}
-                    <div className="flex flex-col">
-                        <Droppable droppableId="tray" direction="vertical">
-                            {(provided, snapshot) => (
-                                <div
-                                    ref={provided.innerRef}
-                                    {...provided.droppableProps}
-                                    className={`flex flex-col min-h-[139.2px] min-w-[139.2px] p-4 border-2 border-dashed rounded-lg ${
-                                        snapshot.isDraggingOver
-                                            ? "bg-slate-100 border-slate-300"
-                                            : "border-slate-200"
-                                    }`}
-                                >
-                                    {getUnusedPokemons().map(
-                                        ({ pokemon }, index) => (
-                                            <PokemonItem
-                                                key={pokemon.id}
-                                                id={pokemon.id}
-                                                pokemon={pokemon}
-                                                index={index}
-                                                isDragDisabled={isDragging}
-                                            />
-                                        )
-                                    )}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    </div>
+                    <PokemonTray
+                        pokemons={unusedPokemons.map(({ pokemon }) => pokemon)}
+                        isDragging={isDragging}
+                    />
                 </div>
             </DragDropContext>
         </div>
