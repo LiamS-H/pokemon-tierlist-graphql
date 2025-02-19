@@ -216,10 +216,12 @@ export function Editable({
                                 key={tier.id}
                                 index={index}
                                 tierFragment={tier}
-                                onEdit={(title) => {
-                                    setTiers([{ id: tier.id, title }]);
+                                setTier={(title, pokemonIds) => {
+                                    setTiers([
+                                        { id: tier.id, title, pokemonIds },
+                                    ]);
                                 }}
-                                onDelete={deleteTier}
+                                deleteTier={() => deleteTier(tier.id)}
                                 isDragDisabled={isDragging}
                             />
                         ))}

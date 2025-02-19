@@ -3,7 +3,7 @@ import { useFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 import { tier_tier$key } from "./__generated__/tier_tier.graphql";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, Undo2 } from "lucide-react";
 import { Droppable } from "@hello-pangea/dnd";
 import { PokemonItem } from "./item";
 import { EditText } from "@/components/ui/editText";
@@ -11,14 +11,14 @@ import { getTierColor } from "@/lib/tierColors";
 
 export function Tier({
     tierFragment,
-    onEdit,
-    onDelete,
+    setTier,
+    deleteTier,
     isDragDisabled,
     index,
 }: {
     tierFragment: tier_tier$key;
-    onEdit: (title?: string) => void;
-    onDelete: (id: string) => void;
+    setTier: (title?: string, pokemonIds?: string[]) => void;
+    deleteTier: () => void;
     isDragDisabled: boolean;
     index: number;
 }) {
@@ -41,16 +41,26 @@ export function Tier({
     return (
         <div className={`rounded-lg ${getTierColor(index)}`}>
             <div className="flex items-center justify-between p-2">
-                <EditText text={tier.title} setText={onEdit}>
+                <EditText text={tier.title} setText={(t) => setTier(t)}>
                     <h3 className="">{tier.title}</h3>
                     <Edit2 className="w-3 h-3" />
                 </EditText>
 
                 <div className="flex gap-2">
+                    {tier.pokemons?.length !== 0 && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setTier(undefined, [])}
+                        >
+                            Empty
+                            <Undo2 />
+                        </Button>
+                    )}
                     <Button
                         variant="destructive"
                         size="icon"
-                        onClick={() => onDelete(tier.id)}
+                        onClick={deleteTier}
                     >
                         <Trash2 />
                     </Button>
