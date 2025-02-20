@@ -50,7 +50,7 @@ export function LocalTierlists() {
 
     useEffect(() => {
         if (!queryRefference) {
-            const { published, unpublished } = storageGetTierlists();
+            const { unpublished } = storageGetTierlists();
             loadQuery({ ids: unpublished });
         }
     });

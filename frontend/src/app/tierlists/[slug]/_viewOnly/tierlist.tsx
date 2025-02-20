@@ -110,7 +110,7 @@ export function ViewOnly({ fragment }: { fragment: tierlistViewOnly$key }) {
                 {/* Pokemon Tray */}
                 <div className="flex flex-col">
                     <div className="flex flex-col min-h-[139.2px] min-w-[139.2px] p-4 border-2 border-dashed rounded-lg">
-                        {unusedPokemons.map(({ pokemon }, index) => (
+                        {unusedPokemons.map(({ pokemon }) => (
                             <PokemonThumnail
                                 key={pokemon.id}
                                 pokemonFragment={pokemon}

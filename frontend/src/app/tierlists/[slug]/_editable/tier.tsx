@@ -1,4 +1,3 @@
-import { HTMLAttributes } from "react";
 import { useFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 import { tier_tier$key } from "./__generated__/tier_tier.graphql";

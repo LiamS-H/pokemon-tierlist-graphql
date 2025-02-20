@@ -5,7 +5,7 @@ export interface ILocalTierlists {
 
 export function storageGetTierlists(): ILocalTierlists {
     try {
-        localStorage;
+        localStorage.getItem("");
     } catch {
         return { published: [], unpublished: [] };
     }
