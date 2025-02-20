@@ -7,17 +7,21 @@ export function PokemonItem({
     pokemon,
     index,
     isDragDisabled,
+    remove,
 }: {
     id: string;
     pokemon: ComponentProps<typeof PokemonThumnail>["pokemonFragment"];
     index: number;
     isDragDisabled: boolean;
+    remove?: () => void;
 }) {
+    const removeable = remove !== undefined;
+
     return (
         <Draggable
             draggableId={id.toString()}
             index={index}
-            isDragDisabled={isDragDisabled}
+            isDragDisabled={isDragDisabled || removeable}
         >
             {(provided, snapshot) => (
                 <div
@@ -25,10 +29,9 @@ export function PokemonItem({
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className={`m-1 ${snapshot.isDragging ? "shadow-lg" : ""} ${
-                        isDragDisabled
-                            ? "cursor-not-allowed opacity-70"
-                            : "cursor-grab"
-                    }`}
+                        isDragDisabled ? "cursor-not-allowed" : "cursor-grab"
+                    } ${removeable ? "cursor-pointer" : ""}`}
+                    onClick={remove}
                 >
                     <PokemonThumnail pokemonFragment={pokemon} />
                 </div>

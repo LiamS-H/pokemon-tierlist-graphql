@@ -229,7 +229,7 @@ export function Editable({
                         <Button
                             onClick={createTier}
                             variant="outline"
-                            className="mt-4 w-full"
+                            className="w-full"
                         >
                             <PlusCircle className="h-4 w-4 mr-2" />
                             Add New Tier
@@ -250,6 +250,13 @@ export function Editable({
                     <PokemonTray
                         pokemons={unusedPokemons.map(({ pokemon }) => pokemon)}
                         isDragging={isDragging}
+                        removePokemon={(id: string) => {
+                            setPokemon(
+                                tierlist.pokemons
+                                    ?.map(({ pokemon: { id } }) => id)
+                                    .filter((i) => i !== id) ?? []
+                            );
+                        }}
                     />
                 </div>
             </DragDropContext>
