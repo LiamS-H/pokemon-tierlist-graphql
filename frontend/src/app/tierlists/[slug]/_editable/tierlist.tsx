@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DragDropContext, DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit2, FileCheck, PlusCircle } from "lucide-react";
@@ -66,17 +66,16 @@ export function Editable({
         ) {
             return;
         }
-        const sourceId =
-            source.droppableId === "tray"
-                ? "tray"
-                : source.droppableId.replace("tier-", "");
+        const sourceId = source.droppableId.replace("tier-", "");
 
-        const destinationId =
-            destination.droppableId === "tray"
-                ? "tray"
-                : destination.droppableId.replace("tier-", "");
+        const destinationId = destination.droppableId.replace("tier-", "");
 
         const pokemonId = draggableId;
+
+        if (destinationId === "new-tier" && sourceId === "tray") {
+            createTier({ pokemonIds: [pokemonId] });
+            return;
+        }
 
         if (sourceId === destinationId && sourceId === "tray") {
             const pokemonIds = unusedPokemons.map(({ pokemon }) => pokemon.id);
@@ -225,15 +224,26 @@ export function Editable({
                                 isDragDisabled={isDragging}
                             />
                         ))}
-
-                        <Button
-                            onClick={createTier}
-                            variant="outline"
-                            className="w-full"
+                        <Droppable
+                            droppableId={`new-tier`}
+                            direction="horizontal"
                         >
-                            <PlusCircle className="h-4 w-4 mr-2" />
-                            Add New Tier
-                        </Button>
+                            {(provided, snapshot) => (
+                                <Button
+                                    ref={provided.innerRef}
+                                    {...provided.droppableProps}
+                                    onClick={() => createTier({})}
+                                    variant="outline"
+                                    className={`w-full ${
+                                        snapshot.isDraggingOver ? "h-fit" : ""
+                                    }`}
+                                >
+                                    <PlusCircle className="h-4 w-4 mr-2" />
+                                    Add New Tier
+                                    {provided.placeholder}
+                                </Button>
+                            )}
+                        </Droppable>
                         <div>
                             <PokemonPool
                                 addPokemon={addPokemon}

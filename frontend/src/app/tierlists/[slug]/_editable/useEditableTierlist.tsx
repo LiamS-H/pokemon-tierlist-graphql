@@ -99,7 +99,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
         tiers: { id: string; title?: string; pokemonIds?: string[] }[],
         pokemon?: string[]
     ) => void;
-    createTier: () => void;
+    createTier: (tier: { title?: string; pokemonIds?: string[] }) => void;
     deleteTier: (id: string) => void;
 } {
     const tierlist = useFragment(tierlistFragment, key);
@@ -173,7 +173,7 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
                 ...optimisticResponseSpread,
             },
         };
-        // console.log(optimisticResponse);
+        console.log(optimisticResponse);
         if (!tierlist.id) return;
 
         updateTierlist({
@@ -319,7 +319,13 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
         runUpdateMutation({ tiers: inputTiers, pokemonIds }, update);
     }
 
-    function createTier() {
+    function createTier({
+        pokemonIds,
+        title,
+    }: {
+        pokemonIds?: string[];
+        title?: string;
+    }) {
         const updateTiers: TierUpdateInput[] = (tierlist.tiers || []).map(
             (tier) => ({
                 id: tier.id,
@@ -333,13 +339,22 @@ export function useEditableTierlist(key: useEditableTierlist_tierlist$key): {
             pokemons,
         }));
         updateTiers.push({
-            title: "New Tier",
-            pokemonIds: [],
+            title: title || "New Tier",
+            pokemonIds: pokemonIds ?? [],
         });
         tiers.push({
             id: `<placedholderid-${tiers.length}>`,
-            title: "New Tier",
-            pokemons: [],
+            title: title || "New Tier",
+            pokemons:
+                pokemonIds
+                    ?.map((id) => {
+                        const pokemon = pokemonsMap.get(id);
+                        if (!pokemon) return;
+                        return {
+                            pokemon,
+                        };
+                    })
+                    .filter((u) => u !== undefined) ?? [],
         });
 
         runUpdateMutation({ tiers: updateTiers }, { tiers });
