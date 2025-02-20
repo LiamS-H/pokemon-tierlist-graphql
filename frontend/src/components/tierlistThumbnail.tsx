@@ -45,7 +45,7 @@ export function TierlistThumbnail({
                     return (
                         <div
                             key={tier.id}
-                            className={`w-full flex overflow-clip ${getTierColor(
+                            className={`w-full h-6 flex overflow-clip ${getTierColor(
                                 index
                             )}`}
                         >
@@ -56,7 +56,7 @@ export function TierlistThumbnail({
                                         pokemonFragment={pokemon}
                                     />
                                 </div>
-                            ))}
+                            )) ?? <span></span>}
                         </div>
                     );
                 })}
