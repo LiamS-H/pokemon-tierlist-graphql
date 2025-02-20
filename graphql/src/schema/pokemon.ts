@@ -98,7 +98,8 @@ export const PokemonUniqueInput = builder.inputType('PokemonUniqueInput', {
 builder.queryFields((t) => ({
   allPokemons: t.prismaField({
     type: ['Pokemon'],
-    resolve: (query) => prisma.pokemon.findMany({ ...query }),
+    resolve: (query) =>
+      prisma.pokemon.findMany({ ...query, orderBy: { number: 'asc' } }),
   }),
   pokemon: t.prismaField({
     type: 'Pokemon',
