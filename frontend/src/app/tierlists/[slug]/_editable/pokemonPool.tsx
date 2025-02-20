@@ -41,7 +41,10 @@ export function PokemonPool({
                 {allPokemons.map((pokemon) => {
                     const { id, number, name, image } = pokemon;
                     return (
-                        <li key={id}>
+                        <li
+                            key={id}
+                            className="hover:-rotate-2 transition-transform"
+                        >
                             <button
                                 className="disabled:opacity-50"
                                 disabled={usedPokemon.includes(id)}

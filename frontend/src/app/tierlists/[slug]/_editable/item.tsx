@@ -30,7 +30,11 @@ export function PokemonItem({
                     {...provided.dragHandleProps}
                     className={`m-1 ${snapshot.isDragging ? "shadow-lg" : ""} ${
                         isDragDisabled ? "cursor-not-allowed" : "cursor-grab"
-                    } ${removeable ? "cursor-pointer" : ""}`}
+                    } ${
+                        removeable
+                            ? "cursor-pointer hover:rotate-3 transition-transform"
+                            : ""
+                    }`}
                     onClick={remove}
                 >
                     <PokemonThumnail pokemonFragment={pokemon} />
