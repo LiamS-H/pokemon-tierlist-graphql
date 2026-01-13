@@ -32,7 +32,7 @@ export function PokemonItem({
                         isDragDisabled ? "cursor-not-allowed" : "cursor-grab"
                     } ${
                         removeable
-                            ? "cursor-pointer hover:rotate-3 transition-transform"
+                            ? "cursor-pointer hover:rotate-3 transition-transform animate-shake"
                             : ""
                     }`}
                     onClick={remove}
